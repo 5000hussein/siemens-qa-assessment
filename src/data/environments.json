@@ -1,0 +1,6 @@
+{
+  "PROD": {
+    "baseUrl": "https://eventhub.rahulshettyacademy.com",
+    "apiBaseUrl": "https://api.eventhub.rahulshettyacademy.com/api/"
+  }
+}

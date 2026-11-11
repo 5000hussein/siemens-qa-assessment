@@ -1,0 +1,39 @@
+{
+  "name": "eventhub-qa",
+  "version": "1.0.0",
+  "description": "Playwright TypeScript UI + API automation for EventHub (US-114 Book tickets for an event)",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --project=ui",
+    "test:api": "playwright test --project=api",
+    "test:headed": "playwright test --project=ui --headed",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "format": "prettier --write \"src/**/*.ts\" playwright.config.ts",
+    "format:check": "prettier --check \"src/**/*.ts\" playwright.config.ts",
+    "api:spec": "node scripts/fetch-api-spec.js",
+    "mcp:setup": "powershell -ExecutionPolicy Bypass -File scripts/setup-mcp.ps1"
+  },
+  "keywords": [
+    "playwright",
+    "typescript",
+    "testing"
+  ],
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^22.20.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^18.0.10",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-playwright": "^2.12.2",
+    "prettier": "^3.10.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.2"
+  }
+}

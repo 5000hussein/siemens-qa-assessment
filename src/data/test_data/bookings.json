@@ -1,0 +1,29 @@
+{
+  "PROD": {
+    "minAvailableSeats": 20,
+    "customer": {
+      "name": "QA Automation",
+      "email": "qa.automation@example.com",
+      "phone": "+91 9876543210"
+    },
+    "ui": {
+      "quantity": 3,
+      "singleQuantity": 1,
+      "maxQuantity": 10
+    },
+    "api": {
+      "quantity": 2,
+      "maxQuantity": 10,
+      "aboveMaxQuantity": 11,
+      "zeroQuantity": 0,
+      "notFoundEventId": 999999999,
+      "notFoundBookingId": 999999999,
+      "notFoundBookingRef": "X-000000"
+    },
+    "invalidCustomer": {
+      "shortName": "Q",
+      "invalidEmail": "not-an-email",
+      "shortPhone": "123"
+    }
+  }
+}
