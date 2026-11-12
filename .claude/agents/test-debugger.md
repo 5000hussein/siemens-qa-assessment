@@ -1,6 +1,7 @@
 ---
 name: test-debugger
 description: "Investigates failing or flaky EventHub tests (UI or API), finds the root cause and fixes the framework code. Use when a test fails, times out, or passes inconsistently."
+model: opus
 tools: Read, Grep, Glob, Edit, Bash, mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_click, mcp__playwright__browser_evaluate, mcp__playwright__browser_network_requests, mcp__playwright__browser_console_messages, mcp__playwright__browser_take_screenshot
 skills:
   - debug-test-failure

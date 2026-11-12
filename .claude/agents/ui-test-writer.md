@@ -1,6 +1,7 @@
 ---
 name: ui-test-writer
 description: "Writes and extends EventHub UI tests and page objects (src/tests/ui, src/pages) following this repo's conventions. Use for any new UI scenario, new screen, or change to an existing UI flow."
+model: opus
 tools: Read, Grep, Glob, Edit, Write, Bash, mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_click, mcp__playwright__browser_fill_form, mcp__playwright__browser_type, mcp__playwright__browser_press_key, mcp__playwright__browser_wait_for, mcp__playwright__browser_evaluate, mcp__playwright__browser_network_requests, mcp__playwright__browser_take_screenshot
 skills:
   - explore-with-mcp

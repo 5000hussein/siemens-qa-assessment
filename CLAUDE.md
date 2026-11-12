@@ -20,11 +20,13 @@ These rules apply to every AI agent working in this repo. Details live in the ag
 
 ## Agents (`.claude/agents/`)
 
-| Agent | Use it for | Skills it loads |
-|---|---|---|
-| [`ui-test-writer`](.claude/agents/ui-test-writer.md) | New or changed UI tests and page objects | explore-with-mcp, create-page-object, create-test, test-case-structure |
-| [`api-test-writer`](.claude/agents/api-test-writer.md) | New or changed API tests and API clients | create-api-client, create-test, test-case-structure |
-| [`test-debugger`](.claude/agents/test-debugger.md) | Failing or flaky tests | debug-test-failure, explore-with-mcp |
+| Agent | Model | Use it for | Skills it loads |
+|---|---|---|---|
+| [`ui-test-writer`](.claude/agents/ui-test-writer.md) | opus | New or changed UI tests and page objects | explore-with-mcp, create-page-object, create-test, test-case-structure |
+| [`api-test-writer`](.claude/agents/api-test-writer.md) | sonnet | New or changed API tests and API clients | create-api-client, create-test, test-case-structure |
+| [`test-debugger`](.claude/agents/test-debugger.md) | opus | Failing or flaky tests | debug-test-failure, explore-with-mcp |
+
+Model choice: `opus` where the agent has to reason about a live page or an unknown failure (mapping screens with the MCP, choosing locators, root-causing). `sonnet` where the work follows a written contract (OpenAPI spec + existing client patterns). Change the `model:` line in the agent file to override.
 
 ## Skills (`.claude/skills/<name>/SKILL.md`)
 

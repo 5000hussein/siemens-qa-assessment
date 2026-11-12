@@ -1,6 +1,7 @@
 ---
 name: api-test-writer
 description: "Writes and extends EventHub API tests and API clients (src/tests/api, src/api) following this repo's conventions. Use for any new endpoint, contract check, validation or negative API scenario."
+model: sonnet
 tools: Read, Grep, Glob, Edit, Write, Bash
 skills:
   - create-api-client
