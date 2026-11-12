@@ -42,5 +42,5 @@ YOU MUST: **restate → MCQs → write a plan → wait for approval → implemen
 - **Command:** `.claude/commands/automate.md`
 - **Agents:** `.claude/agents/automate/` · **Skills:** `.claude/skills/<name>/SKILL.md`
 - **Domain (app facts):** `.claude/domain/INDEX.md` — requirements, app map, API notes + `openapi.json`, known issues
-- **Run:** `npm test` · `npm run test:ui` · `npm run test:api` · `npm run test:report` · `npm run api:spec` · `npm run mcp:setup`
+- **Run:** `npm test` · `npm run test:ui` · `npm run test:api` · `npm run test:report` · `npm run api:spec`
 - **Browser:** visible locally; `HEADLESS=true` hides it, `SLOW_MO=500` slows it; CI is headless

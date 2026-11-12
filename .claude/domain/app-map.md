@@ -1,4 +1,4 @@
-# EventHub UI map (observed 2026-11-11)
+# EventHub UI map
 
 Base: `https://eventhub.rahulshettyacademy.com` (Next.js). Every route except `/login` and `/register` redirects to `/login` when signed out.
 Session: JWT in `localStorage['eventhub_token']` (no cookies) — captured by Playwright storage state.
@@ -29,9 +29,17 @@ Heading "Upcoming Events" (h1). Search textbox "Search events, venues…", categ
 
 ## `/bookings` → `MyBookingsPage`
 - h1 "My Bookings", button "Clear all bookings" (**never use in tests**).
-- Card `getByTestId('booking-card')`: `<ref> confirmed #<id>`, h3 event title, `🎫 <n> tickets`, total `$<amount>`, link "View Details" (`/bookings/{id}`), `getByTestId('cancel-booking-btn')`.
+- Card `getByTestId('booking-card')`: `<ref> confirmed #<id>`, h3 event title, `🎫 <n> tickets`, total `$<amount>`, link "View Details" (`/bookings/{id}`, `MyBookingsPage.openBookingDetails`), `getByTestId('cancel-booking-btn')`.
 - Empty state: h3 "No bookings yet".
 - Cancel opens `role=dialog` "Cancel this booking?" with text "This will cancel <ref> and release <n> seat(s) back to the event. This action cannot be undone." and buttons "Cancel" / "Yes, cancel it". On confirm the card disappears (no toast).
 
-## `/bookings/{id}` (not automated yet)
-Breadcrumb `<ref>`, status, Cancel Booking, sections Event Details, Customer Details, Payment Summary (Tickets, Price per ticket, Total Paid), Refund (`getByTestId('check-refund-btn')` "Check eligibility for refund?"), Booking Information.
+## `/bookings/{id}` → `BookingDetailsPage` (observed 2026-11-12)
+- Header: breadcrumb (`main` → `navigation`) "My Bookings / `<ref>`"; next to the ref a status badge `<span><ref></span><span>confirmed</span>`; h1 event title; "Cancel Booking" button.
+- The ref appears twice on the page — scope to the breadcrumb. No test ids on the status badge or the values.
+- Sections are h2 headings with `<span>Label</span><span>Value</span>` pairs below: value = `//h2[text()="<Section>"]/following-sibling::div//span[text()="<Label>"]/following-sibling::span`.
+  - **Event Details:** Event, Category, Date, Venue, City
+  - **Customer Details:** Name, Email, Phone
+  - **Payment Summary:** Tickets, Price per ticket, Total Paid (`$<price × tickets>`)
+  - **Refund:** `getByTestId('check-refund-btn')` "Check eligibility for refund?" (not automated)
+  - **Booking Information:** Booked on `<date>`, Booking ID `#<id>`
+- The event date is rendered in the **browser's local time zone** ("Tuesday, 20 October 2026") — don't assert it against the API's UTC `eventDate`.

@@ -11,8 +11,4 @@ export class AuthApi extends BaseApi {
     if (!response.ok()) throw new Error(`Login failed for ${email}: ${response.status()} ${await response.text()}`);
     return (await response.json()).token;
   }
-
-  async me(): Promise<APIResponse> {
-    return this.request.get('auth/me');
-  }
 }

@@ -14,8 +14,7 @@
     "lint": "eslint src",
     "format": "prettier --write \"src/**/*.ts\" playwright.config.ts",
     "format:check": "prettier --check \"src/**/*.ts\" playwright.config.ts",
-    "api:spec": "node scripts/fetch-api-spec.js",
-    "mcp:setup": "powershell -ExecutionPolicy Bypass -File scripts/setup-mcp.ps1"
+    "api:spec": "node scripts/fetch-api-spec.js"
   },
   "keywords": [
     "playwright",
@@ -27,7 +26,6 @@
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.65.0",
     "@types/node": "^22.20.5",
-    "cross-env": "^7.0.3",
     "dotenv": "^18.0.10",
     "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",

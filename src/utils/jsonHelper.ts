@@ -22,8 +22,3 @@ export function readJsonObject<T = any>(filePath: string, keyPath: string): T {
 export function readJsonValue(filePath: string, keyPath: string): string {
   return String(readJsonObject(filePath, keyPath));
 }
-
-export function writeJsonFile(filePath: string, data: unknown): void {
-  const absolutePath = path.isAbsolute(filePath) ? filePath : path.join(process.cwd(), filePath);
-  fs.writeFileSync(absolutePath, JSON.stringify(data, null, 2), 'utf-8');
-}

@@ -3,7 +3,7 @@
 Documented contract: `openapi.json` in this folder (refresh with `npm run api:spec`).
 This file adds what was **observed** against the real API on 2026-11-11.
 
-- Base URL: `https://api.eventhub.rahulshettyacademy.com/api/` (Swagger UI at `/api/docs`; raw spec is embedded in `/api/docs/swagger-ui-init.js`, `/api/docs/swagger.json` returns the HTML page)
+- Base URL: `https://api.eventhub.rahulshettyacademy.com/api/` (Swagger UI at `/api/docs`)
 - Auth: `POST auth/login` `{ email, password }` → `{ success, token, user: { id, email } }`. JWT valid 7 days. Send `Authorization: Bearer <token>`.
 - Everything except `health`, `config`, `auth/register`, `auth/login` returns `401 {"success":false,"error":"Unauthorized"}` without a token.
 - Data is scoped per account (own sandbox): `GET events` shows that account's events; `GET bookings` shows only that account's bookings, although the docs say "List all bookings".
