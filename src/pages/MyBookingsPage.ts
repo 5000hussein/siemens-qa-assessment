@@ -37,6 +37,12 @@ export class MyBookingsPage extends CommonPage {
     return this.bookingCards.filter({ hasText: bookingRef });
   }
 
+  // ========== DETAILS ACTIONS ==========
+  async openBookingDetails(bookingRef: string, bookingId: number): Promise<void> {
+    await this.click(this.bookingCard(bookingRef).getByRole('link', { name: 'View Details' }));
+    await this.page.waitForURL(`**${ROUTES.bookingDetails(bookingId)}`, { timeout: TIMEOUTS.medium });
+  }
+
   // ========== VERIFICATIONS ==========
   async verifyBookingListed(
     bookingRef: string,

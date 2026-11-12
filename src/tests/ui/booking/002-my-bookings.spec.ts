@@ -41,4 +41,23 @@ test.describe('US-114 My Bookings (UI)', () => {
     expect((await bookingsApi.get(booking.id)).status()).toBe(404);
     expect((await eventsApi.getEvent(event.id)).availableSeats).toBe(event.availableSeats);
   });
+
+  test('View Details shows the booking reference and status, event details, customer details and a payment summary where Total Paid = price per ticket × tickets', async ({
+    eventsApi,
+    bookingsApi,
+    myBookingsPage,
+    bookingDetailsPage,
+  }) => {
+    const event = await eventsApi.findBookableEvent(minSeats);
+    const booking = await bookingsApi.createBooking(buildBookingInput(event.id, quantity));
+
+    await myBookingsPage.navigate();
+    await myBookingsPage.verifyBookingListed(booking.bookingRef, event.title, quantity, event.price, bookingStatuses.confirmed);
+    await myBookingsPage.openBookingDetails(booking.bookingRef, booking.id);
+
+    await bookingDetailsPage.verifyBookingHeader(booking.bookingRef, bookingStatuses.confirmed);
+    await bookingDetailsPage.verifyEventDetails(event);
+    await bookingDetailsPage.verifyCustomerDetails(customer.name, customer.email, customer.phone);
+    await bookingDetailsPage.verifyPaymentSummary(quantity, event.price);
+  });
 });

@@ -12,7 +12,7 @@ user-invocable: false
 |---|---|
 | Page objects | `src/pages/<Name>Page.ts` (signed-in screens extend `CommonPage`, others `BasePage`) |
 | API clients | `src/api/<Name>Api.ts` extending `BaseApi`; types in `src/api/types.ts` |
-| Registration | `src/factories/PageFactory.ts` / `ApiFactory.ts` + a fixture in `src/core/baseTest.ts` |
+| Registration | One fixture line in `src/core/baseTest.ts`: `xPage: async ({ page }, use) => { await use(new XPage(page)); }` |
 | Test data | `src/data/test_data/<area>.json` keyed by env (`PROD`); builders in `src/data/builders/` |
 | Expected texts / routes | `src/config/assertions.ts` / `src/config/routes.ts` |
 | Specs | `src/tests/ui/<area>/NNN-<flow>.spec.ts`, `src/tests/api/<resource>/NNN-<behaviour>.spec.ts` |
@@ -37,7 +37,7 @@ user-invocable: false
 
 ## Auth and data ownership
 
-- Tests never log in. UI: the `setup` project saves storage state; API: the `api` fixture carries the token. `anonymousApi` is only for 401 cases.
+- Tests never log in. UI: the `setup` project saves storage state; API: the `apiRequest` fixture carries the token and every client fixture is built on it. `anonymousBookingsApi` is only for 401 cases.
 - Each test arranges its own data (through the API when it is not what is being tested), acts on the layer under test, and leaves nothing behind.
 - Pick records at runtime from the API (e.g. "first item with enough capacity"); never pin ids.
 - Credentials only in `.env`. Never read or print `.env` or `.auth/`.

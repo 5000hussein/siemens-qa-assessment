@@ -48,9 +48,9 @@ test.describe('AC5 negative: POST /api/bookings rejects invalid requests', () =>
     expect(response.status()).toBe(404);
   });
 
-  test('request without a token returns 401', async ({ anonymousApi, eventsApi }) => {
+  test('request without a token returns 401', async ({ anonymousBookingsApi, eventsApi }) => {
     const event = await eventsApi.findBookableEvent(minSeats);
-    const response = await anonymousApi.getBookingsApi().create(buildBookingInput(event.id, apiData.quantity));
+    const response = await anonymousBookingsApi.create(buildBookingInput(event.id, apiData.quantity));
     expect(response.status()).toBe(401);
     expect((await response.json()).error).toBe(validationMessages.api.unauthorized);
   });

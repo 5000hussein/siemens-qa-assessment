@@ -22,7 +22,7 @@ From the command: `layer`, the numbered steps, the writer's file list and test n
 2. **Coverage:** every numbered step maps to an action and an assertion in a spec. Missing → `FAIL — [COVERAGE]: step N "<text>"`.
 3. **Conventions** (per `framework-conventions` and `locator-rules`):
    - no login, auth header, pinned id, literal test data or computed value in a spec
-   - new classes registered in the factory and `baseTest`
+   - new classes registered as a fixture in `baseTest`
    - expected texts in `assertions.ts`, routes in `routes.ts`, `TIMEOUTS` only, no `waitForTimeout`
    - locator priority respected; created records are cleaned up
    → `FAIL — [CONVENTION]: <file>:<line> <rule>`.

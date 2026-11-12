@@ -1,29 +1,27 @@
 /* eslint-disable no-empty-pattern -- Playwright fixtures must destructure their first argument */
-import { test as base, expect, request } from '@playwright/test';
-import { PageFactory } from '../factories/PageFactory';
-import { ApiFactory } from '../factories/ApiFactory';
+import { test as base, expect, request, type APIRequestContext } from '@playwright/test';
 import { CommonPage } from '../pages/CommonPage';
 import { LoginPage } from '../pages/LoginPage';
 import { EventsPage } from '../pages/EventsPage';
 import { EventDetailsPage } from '../pages/EventDetailsPage';
 import { MyBookingsPage } from '../pages/MyBookingsPage';
+import { BookingDetailsPage } from '../pages/BookingDetailsPage';
 import { AuthApi } from '../api/AuthApi';
 import { EventsApi } from '../api/EventsApi';
 import { BookingsApi } from '../api/BookingsApi';
 import { apiBaseUrl, getUserCredentials } from '../config/environment';
 
 type Fixtures = {
-  pages: PageFactory;
   commonPage: CommonPage;
   loginPage: LoginPage;
   eventsPage: EventsPage;
   eventDetailsPage: EventDetailsPage;
   myBookingsPage: MyBookingsPage;
-  api: ApiFactory;
-  anonymousApi: ApiFactory;
-  authApi: AuthApi;
+  bookingDetailsPage: BookingDetailsPage;
+  apiRequest: APIRequestContext;
   eventsApi: EventsApi;
   bookingsApi: BookingsApi;
+  anonymousBookingsApi: BookingsApi;
 };
 
 type WorkerFixtures = {
@@ -44,47 +42,44 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
   ],
 
   // ========== API ==========
-  api: async ({ apiToken }, use) => {
+  apiRequest: async ({ apiToken }, use) => {
     const ctx = await request.newContext({ baseURL: apiBaseUrl, extraHTTPHeaders: { Authorization: `Bearer ${apiToken}` } });
-    const api = new ApiFactory(ctx);
-    await use(api);
-    await api.getBookingsApi().cleanup();
+    await use(ctx);
     await ctx.dispose();
   },
-  anonymousApi: async ({}, use) => {
+  eventsApi: async ({ apiRequest }, use) => {
+    await use(new EventsApi(apiRequest));
+  },
+  bookingsApi: async ({ apiRequest }, use) => {
+    const bookingsApi = new BookingsApi(apiRequest);
+    await use(bookingsApi);
+    await bookingsApi.cleanup();
+  },
+  // No token: only for "request without a token returns 401" tests
+  anonymousBookingsApi: async ({}, use) => {
     const ctx = await request.newContext({ baseURL: apiBaseUrl });
-    const api = new ApiFactory(ctx);
-    await use(api);
+    await use(new BookingsApi(ctx));
     await ctx.dispose();
-  },
-  authApi: async ({ api }, use) => {
-    await use(api.getAuthApi());
-  },
-  eventsApi: async ({ api }, use) => {
-    await use(api.getEventsApi());
-  },
-  bookingsApi: async ({ api }, use) => {
-    await use(api.getBookingsApi());
   },
 
   // ========== PAGES ==========
-  pages: async ({ page }, use) => {
-    await use(new PageFactory(page));
+  commonPage: async ({ page }, use) => {
+    await use(new CommonPage(page));
   },
-  commonPage: async ({ pages }, use) => {
-    await use(pages.getCommonPage());
+  loginPage: async ({ page }, use) => {
+    await use(new LoginPage(page));
   },
-  loginPage: async ({ pages }, use) => {
-    await use(pages.getLoginPage());
+  eventsPage: async ({ page }, use) => {
+    await use(new EventsPage(page));
   },
-  eventsPage: async ({ pages }, use) => {
-    await use(pages.getEventsPage());
+  eventDetailsPage: async ({ page }, use) => {
+    await use(new EventDetailsPage(page));
   },
-  eventDetailsPage: async ({ pages }, use) => {
-    await use(pages.getEventDetailsPage());
+  myBookingsPage: async ({ page }, use) => {
+    await use(new MyBookingsPage(page));
   },
-  myBookingsPage: async ({ pages }, use) => {
-    await use(pages.getMyBookingsPage());
+  bookingDetailsPage: async ({ page }, use) => {
+    await use(new BookingDetailsPage(page));
   },
 });
 

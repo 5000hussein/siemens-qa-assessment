@@ -33,11 +33,11 @@ test.describe('AC4 via API: DELETE /api/bookings/{id}', () => {
     expect((await bookingsApi.cancel(apiData.notFoundBookingId)).status()).toBe(404);
   });
 
-  test('request without a token returns 401 and the booking survives', async ({ anonymousApi, eventsApi, bookingsApi }) => {
+  test('request without a token returns 401 and the booking survives', async ({ anonymousBookingsApi, eventsApi, bookingsApi }) => {
     const event = await eventsApi.findBookableEvent(minSeats);
     const booking = await bookingsApi.createBooking(buildBookingInput(event.id, apiData.quantity));
 
-    expect((await anonymousApi.getBookingsApi().cancel(booking.id)).status()).toBe(401);
+    expect((await anonymousBookingsApi.cancel(booking.id)).status()).toBe(401);
     expect((await bookingsApi.get(booking.id)).status()).toBe(200);
   });
 });
