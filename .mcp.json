@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "playwright": {
+    "playwright-test": {
       "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"]
+      "args": ["-y", "@playwright/mcp@latest", "--browser", "chrome", "--isolated", "--storage-state", ".auth/user.json"]
     },
     "github": {
       "command": "npx",

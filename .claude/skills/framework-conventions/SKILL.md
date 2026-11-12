@@ -1,4 +1,5 @@
 ---
+name: framework-conventions
 description: Repo structure and coding conventions for this Playwright + TypeScript framework - where files go, page objects, API clients, fixtures, auth, test data, cleanup and spec layout.
 user-invocable: false
 ---
@@ -24,6 +25,7 @@ user-invocable: false
 - `readonly` locators grouped under `// ========== SECTION ==========`, initialised in the constructor.
 - Action methods: `waitFor({ state: 'visible' })` → action → wait for the resulting state.
 - `verify*(values…)` methods own every assertion that needs computation or formatting.
+- Text used only to **find** an element (a button name, a field label, a section heading used as an anchor) lives in the page object's locator. Text the test **asserts** on (messages, statuses, dialog titles) lives in `assertions.ts` and is passed in or imported.
 - One class per screen; add to it rather than creating a sibling. Never model destructive shared-account actions.
 
 ## API clients

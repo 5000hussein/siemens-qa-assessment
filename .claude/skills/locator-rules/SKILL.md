@@ -1,4 +1,5 @@
 ---
+name: locator-rules
 description: Locator priority, uniqueness verification, scoping and naming for Playwright page objects - used when discovering, writing or reviewing locators.
 user-invocable: false
 ---

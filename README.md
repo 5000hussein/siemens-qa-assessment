@@ -100,7 +100,7 @@ src/
 
 ### AI tooling inside the repo
 
-- `.mcp.json` registers the **Playwright MCP** (for exploring screens before automating them) and the **GitHub MCP** (it needs `GITHUB_PERSONAL_ACCESS_TOKEN` in the environment; `npm run mcp:setup` checks it).
+- `.mcp.json` registers the **Playwright MCP** as `playwright-test` (Chrome, starts signed in from the framework's saved login state; named so it can't clash with a global `playwright` server) and the **GitHub MCP** (it needs `GITHUB_PERSONAL_ACCESS_TOKEN` in the environment; `npm run mcp:setup` checks it).
 - `CLAUDE.md` holds the always-on rules for any AI agent in the repo.
 - **`/automate <requirement or flow>`** (`.claude/commands/automate.md`) turns a requirement into a verified test and a PR:
   1. Gate 1 asks whether to automate web or API, and the coverage and target.

@@ -1,4 +1,5 @@
 ---
+name: test-fix
 description: Run a failing Playwright test by file or title, find the root cause from the error, screenshot, trace and error-context, and fix the framework code without weakening the test. Uses the Playwright MCP when the page needs live inspection.
 user-invocable: true
 ---
@@ -37,7 +38,7 @@ UI failures leave `test-results/<test>/`: `test-failed-1.png`, `error-context.md
 
 ## 4. Inspect live (if the screen changed)
 
-Playwright MCP: `browser_navigate` → `browser_snapshot` → `browser_evaluate` to count matches for the new locator. Update `.claude/domain/app-map.md` with what changed.
+Playwright MCP (`playwright-test`, starts signed in): `browser_navigate` → `browser_snapshot` → `browser_evaluate` to count matches for the new locator. Update `.claude/domain/app-map.md` with what changed.
 
 ## 5. Confirm
 
