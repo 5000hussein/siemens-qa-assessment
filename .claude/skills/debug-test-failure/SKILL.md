@@ -1,3 +1,8 @@
+---
+name: debug-test-failure
+description: "Investigate a failing Playwright test in this repo: read the error, screenshot, trace and error-context, match against common causes, re-run. Use when any test fails or is flaky."
+---
+
 # Skill: Debug a Test Failure
 
 ## Steps

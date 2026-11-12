@@ -1,3 +1,8 @@
+---
+name: test-case-structure
+description: "How a booking test is laid out here (arrange via API, act on the layer under test, assert, automatic cleanup), which layer verifies which AC, and fixture selection. Use when planning what a new test should contain."
+---
+
 # Skill: Test Case Structure
 
 ## Core Principle

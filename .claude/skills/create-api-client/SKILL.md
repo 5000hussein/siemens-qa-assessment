@@ -1,3 +1,8 @@
+---
+name: create-api-client
+description: "Create or extend an API client in src/api/: BaseApi pattern, raw vs convenience calls, cleanup tracking, registering in ApiFactory and baseTest. Use when an API test needs an endpoint that has no client method yet."
+---
+
 # Skill: Create a New API Client
 
 ## When to Use

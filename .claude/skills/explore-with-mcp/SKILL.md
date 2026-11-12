@@ -1,3 +1,8 @@
+---
+name: explore-with-mcp
+description: "Map an EventHub screen or API call with the Playwright MCP before automating it, then record locators and quirks in .claude/knowledge/. Use before writing a page object for an unmapped screen or when a locator broke."
+---
+
 # Skill: Explore a Screen with the Playwright MCP
 
 ## When to Use

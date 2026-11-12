@@ -1,3 +1,8 @@
+---
+name: create-page-object
+description: "Create or extend a page object in src/pages/: locator conventions, section layout, verify methods, registering in PageFactory and baseTest. Use when a UI test needs a screen or element that is not modelled yet."
+---
+
 # Skill: Create a New Page Object
 
 ## When to Use
@@ -59,4 +64,4 @@ New URL → `src/config/routes.ts`. New expected text → `src/config/assertions
 
 - Never model destructive shared-account actions ("Clear all bookings").
 - No static waits; `waitFor` before interaction.
-- Update `CLAUDE.md` (structure), `.claude/agents/playwright.md` and `ui-map.md`.
+- Update `.claude/knowledge/architecture.md` (layers) and `ui-map.md`.

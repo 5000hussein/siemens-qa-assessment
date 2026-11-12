@@ -1,21 +1,10 @@
----
-name: playwright
-description: Writes, extends and debugs the EventHub Playwright + TypeScript UI and API tests following this repo's architecture. Use for any test, page object, API client or fixture work.
----
+# EventHub QA Automation - Architecture
 
-# EventHub QA Automation - Agent Guide
-
-**Keep this file up to date.** Whenever you add pages, clients, tests, flows or rules, update the relevant section so the next agent has accurate context.
+**Keep this file up to date.** Whenever you add pages, clients, fixtures or flows, update the relevant section.
 
 ## What This Project Is
 
 Playwright + TypeScript automation of the EventHub ticket-booking flow (US-114). EventHub is a public practice app with a Next.js UI (`https://eventhub.rahulshettyacademy.com`) and a REST API (`https://api.eventhub.rahulshettyacademy.com/api`). Each account is an isolated sandbox with its own events and bookings.
-
-## Before writing code
-
-1. Read the matching file in `.claude/knowledge/` (see the table in `CLAUDE.md`).
-2. If the screen or endpoint is not in the knowledge base yet, map it first with the Playwright MCP (`explore-with-mcp` skill) and record it in `ui-map.md` / `known-issues.md`.
-3. Follow the relevant skill in `.claude/skills/`.
 
 ## Tech Stack
 
@@ -74,14 +63,3 @@ config/                   environment, routes, assertions (expected texts)
 
 ### Known defects
 `test.fail(true, reason)` in `004-contract-vs-docs.spec.ts`; each one is also listed in `known-issues.md` and the README.
-
-## Commands
-
-See `CLAUDE.md` → Commands.
-
-## Important Rules
-
-- Tests never log in, never pin event ids, never leave bookings behind.
-- Specs contain no helper functions or computed expectations.
-- No static waits. Role-based locators first, then `data-testid`, then XPath/CSS.
-- Update `CLAUDE.md`, this file, the skills and the knowledge base when something changes.

@@ -101,7 +101,9 @@ src/
 ### AI tooling inside the repo
 
 - `.mcp.json` registers the **Playwright MCP** (for exploring screens before automating them) and the **GitHub MCP** (it needs `GITHUB_PERSONAL_ACCESS_TOKEN` in the environment; `npm run mcp:setup` checks it).
-- `CLAUDE.md` holds the rules every AI agent must follow. `.claude/agents/playwright.md` is the architecture guide, and `.claude/skills/` has step-by-step recipes (new test, page object, API client, MCP exploration, debugging).
+- `CLAUDE.md` holds the hard rules every AI agent must follow, plus an index of which agent, skill and knowledge file to use for each task.
+- `.claude/agents/` has three agents: `ui-test-writer`, `api-test-writer` and `test-debugger`. Each has its own purpose, rules and tool list, and preloads the skills it needs through its `skills:` frontmatter.
+- `.claude/skills/<name>/SKILL.md` has the step-by-step recipes: new test, page object, API client, test structure, MCP exploration and debugging.
 - `.claude/knowledge/` is a small retrieval base the agent is told to read first: the brief, the API contract plus observed behaviour, a UI locator map, and the known issues. `npm run api:spec` regenerates the API part straight from Swagger.
 
 ---

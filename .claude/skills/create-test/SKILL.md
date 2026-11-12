@@ -1,3 +1,8 @@
+---
+name: create-test
+description: "Create a new UI or API spec in this repo: file layout, fixtures, JSON data, framework-owned auth, automatic booking cleanup, assertions. Use whenever adding a test under src/tests/."
+---
+
 # Skill: Create a New Test
 
 ## When to Use
