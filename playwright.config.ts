@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import { authStatePath, baseUrl, currentEnv, isCI } from './src/config/environment';
+import { authStatePath, baseUrl, isCI } from './src/config/environment';
 
 export default defineConfig({
   testDir: './src/tests',
@@ -11,7 +11,7 @@ export default defineConfig({
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
   workers: 1,
-  reporter: isCI ? [['dot'], ['html', { open: 'never' }]] : [['html', { open: 'never' }], ['list']],
+  reporter: [['list'], ['html', { open: 'never' }]],
 
   use: {
     baseURL: baseUrl,
@@ -34,12 +34,10 @@ export default defineConfig({
       testMatch: '**/ui/**/*.spec.ts',
       dependencies: ['setup'],
       use: { ...devices['Desktop Chrome'], storageState: authStatePath },
-      metadata: { env: currentEnv },
     },
     {
       name: 'api',
       testMatch: '**/api/**/*.spec.ts',
-      metadata: { env: currentEnv },
     },
   ],
 });
