@@ -1,6 +1,6 @@
 # EventHub API — what the tests rely on
 
-Source of truth for the contract: `openapi.json` (refresh: `npm run api:spec`; generated table in `endpoints.generated.md`).
+Documented contract: `openapi.json` in this folder (refresh with `npm run api:spec`).
 This file adds what was **observed** against the real API on 2026-11-11.
 
 - Base URL: `https://api.eventhub.rahulshettyacademy.com/api/` (Swagger UI at `/api/docs`; raw spec is embedded in `/api/docs/swagger-ui-init.js`, `/api/docs/swagger.json` returns the HTML page)

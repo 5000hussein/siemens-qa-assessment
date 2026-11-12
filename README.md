@@ -28,7 +28,7 @@ npm test                      # setup + UI + API (24 tests, ~45 s)
 | `SLOW_MO=500 npm run test:ui` | Slow each action down to watch the run |
 | `npm run test:report` | Open the HTML report (screenshots, video, trace on failure) |
 | `npm run typecheck && npm run lint && npm run format:check` | Static checks |
-| `npm run api:spec` | Re-download the OpenAPI spec into `.claude/knowledge/api/` |
+| `npm run api:spec` | Re-download the OpenAPI spec into `.claude/domain/openapi.json` |
 
 Every test cleans up the bookings it creates, so the shared environment is left as it was found.
 
@@ -95,16 +95,22 @@ src/
 | **UI results cross-checked against the API.** After a UI booking, the test reads it back by reference and checks the event, quantity and total. | Shows that what the user sees matches what was actually stored. |
 | **Known defects are executable** (`test.fail` with a reason). | They stay visible in every run without turning the run red. When a defect is fixed, the test fails and tells you to remove the marker. |
 | **Single worker.** | All tests share one account and three sandbox events, so seat-count assertions would race. The tests are already independent: give each worker its own account and set `workers` > 1. |
-| **Built on the team's ADGM framework conventions** (BasePage/CommonPage, PageFactory, JSON data helpers, `assertions.ts`, `TIMEOUTS`, ESLint/Prettier rules). | Familiar to the team. Differences are deliberate and listed in `CLAUDE.md`. |
+| **Built on the team's ADGM framework conventions** (BasePage/CommonPage, PageFactory, JSON data helpers, `assertions.ts`, `TIMEOUTS`, ESLint/Prettier rules). | Familiar to the team. Deliberate differences: framework-owned auth, `.env` credentials, API clients instead of fixtures in the test folder, independent tests instead of chained ones. |
 | **Role-based locators first**, then `data-testid`, then CSS/XPath; no static waits (enforced by ESLint). | Resilient to styling changes and closer to how users and assistive tech see the page. |
 
 ### AI tooling inside the repo
 
 - `.mcp.json` registers the **Playwright MCP** (for exploring screens before automating them) and the **GitHub MCP** (it needs `GITHUB_PERSONAL_ACCESS_TOKEN` in the environment; `npm run mcp:setup` checks it).
-- `CLAUDE.md` holds the hard rules every AI agent must follow, plus an index of which agent, skill and knowledge file to use for each task.
-- `.claude/agents/` has three agents: `ui-test-writer`, `api-test-writer` and `test-debugger`. Each has its own purpose, rules and tool list, and preloads the skills it needs through its `skills:` frontmatter.
-- `.claude/skills/<name>/SKILL.md` has the step-by-step recipes: new test, page object, API client, test structure, MCP exploration and debugging.
-- `.claude/knowledge/` is a small retrieval base the agent is told to read first: the brief, the API contract plus observed behaviour, a UI locator map, and the known issues. `npm run api:spec` regenerates the API part straight from Swagger.
+- `CLAUDE.md` holds the always-on rules for any AI agent in the repo.
+- **`/automate <requirement or flow>`** (`.claude/commands/automate.md`) turns a requirement into a verified test and a PR:
+  1. Gate 1 asks whether to automate web or API, and the coverage and target.
+  2. `explorer` maps the live page with the Playwright MCP, or makes live API calls.
+  3. `test-writer` writes the code.
+  4. `verifier` runs typecheck, lint, coverage and convention checks, then a live run, with at most 2 fix cycles.
+  5. At Gate 2 a PR is opened, only after the user approves and only if the live run passed.
+- **`/test-fix <spec>`** diagnoses a failing test and fixes the framework code without weakening the assertion.
+- `.claude/skills/` holds the general conventions (`framework-conventions`, `locator-rules`) that every agent preloads through its `skills:` frontmatter.
+- `.claude/domain/` holds the facts about the app under test: requirements, app map, API notes plus `openapi.json` (regenerated with `npm run api:spec`), and known issues. Agents read `INDEX.md` first, and only `/automate` writes there, after approval.
 
 ---
 

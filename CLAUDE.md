@@ -1,65 +1,46 @@
-# EventHub QA Automation - AI Agent Rules
+# Repo conventions — EventHub QA Automation
 
-Playwright + TypeScript UI and API automation for the EventHub booking flow (US-114, Siemens QA assessment).
-These rules apply to every AI agent working in this repo. Details live in the agents, skills and knowledge files below — read the one that matches your task.
+Playwright + TypeScript UI and API test automation. The repo also hosts a lite agentic QA command (`/automate`) under `.claude/`.
 
-## Hard rules
+## Test work — always-on rules
 
-1. **Never invent data.** No credentials, URLs, event ids, customer details or limits in specs. Read them from `src/data/**/*.json`, or ask the user.
-2. **Never commit or read secrets.** Credentials live only in `.env`; login state in `.auth/`. Both are gitignored. Never open or print them.
-3. **Tests never log in.** Auth belongs to the framework: UI tests start signed in (setup project + storage state), API tests use the authenticated fixtures. `anonymousApi` is only for 401 checks.
-4. **Every test owns its data and cleans up.** Bookings made through `bookingsApi` are cancelled in teardown; UI-made bookings are registered with `bookingsApi.trackByRef(ref)`. Never use "Clear all bookings" — the account is shared.
-5. **Pick events at runtime** with `eventsApi.findBookableEvent(minSeats)`. Never pin an event id or title.
-6. **Specs hold no helpers or computed values.** Computation lives in page `verify*` methods; payloads come from `buildBookingInput()`.
-7. **Expected texts** go in `src/config/assertions.ts`, **routes** in `src/config/routes.ts`, **timeouts** from `TIMEOUTS`. No raw numbers.
-8. **No static waits.** No `waitForTimeout`; `waitFor` before interacting; web-first `expect`.
-9. **Locators:** role-based first, then `getByTestId`, then XPath/CSS as a fallback, scoped to a parent when text repeats.
-10. **Never weaken an assertion to get green.** A doc/story mismatch becomes `test.fail(true, reason)` plus an entry in `known-issues.md` and the README.
-11. **Single worker.** All tests share one account and a few events; seat-count checks would race in parallel.
-12. **Keep the docs true.** If you add a page, client, convention or learn something about the app, update the matching knowledge file and this index in the same change.
+Full conventions live in the **`framework-conventions`** and **`locator-rules`** skills (`.claude/skills/`) — read them before writing or editing tests. The rules never to skip:
 
-## Agents (`.claude/agents/`)
+- **Grep before writing.** Search `src/pages/`, `src/api/`, `src/data/` for an existing method, locator or data key before creating one. Reuse > re-invent.
+- **Tests never log in.** Auth is owned by the framework (setup project + storage state for UI, token fixture for API).
+- **No literals in specs.** Data from `src/data/**/*.json`, expected texts from `assertions.ts`, routes from `routes.ts`, timeouts from `TIMEOUTS`.
+- **Own your data.** Every test arranges its own records, never pins ids, and leaves nothing behind (tracked by the API clients, cleaned in fixture teardown).
+- **Selector priority:** role → test id → label/text → `#id` → XPath. Every locator matches exactly one element.
+- **No static waits.** No `waitForTimeout`; `waitFor` before interacting; web-first `expect`.
+- **Never weaken an assertion.** App vs requirement/doc mismatch → `test.fail(true, reason)` + an entry in `.claude/domain/known-issues.md`.
+- **Never read secrets.** `.env` and `.auth/` are gitignored; never open, print or commit them.
+- **Green before done:** `npm run typecheck && npm run lint && npm run format:check` and the affected tests pass.
+- **One action, one commit.** Fix what was asked; don't refactor "while you're here."
 
-| Agent | Model | Use it for | Skills it loads |
-|---|---|---|---|
-| [`ui-test-writer`](.claude/agents/ui-test-writer.md) | opus | New or changed UI tests and page objects | explore-with-mcp, create-page-object, create-test, test-case-structure |
-| [`api-test-writer`](.claude/agents/api-test-writer.md) | sonnet | New or changed API tests and API clients | create-api-client, create-test, test-case-structure |
-| [`test-debugger`](.claude/agents/test-debugger.md) | opus | Failing or flaky tests | debug-test-failure, explore-with-mcp |
+## Agentic QA command
 
-Model choice: `opus` where the agent has to reason about a live page or an unknown failure (mapping screens with the MCP, choosing locators, root-causing). `sonnet` where the work follows a written contract (OpenAPI spec + existing client patterns). Change the `model:` line in the agent file to override.
-
-## Skills (`.claude/skills/<name>/SKILL.md`)
-
-| Skill | What it covers |
+| Command | In → out |
 |---|---|
-| [`create-test`](.claude/skills/create-test/SKILL.md) | Spec layout, fixtures, data, auth, cleanup, assertions |
-| [`create-page-object`](.claude/skills/create-page-object/SKILL.md) | Page object structure, locators, PageFactory + baseTest registration |
-| [`create-api-client`](.claude/skills/create-api-client/SKILL.md) | API client structure, cleanup tracking, ApiFactory registration |
-| [`test-case-structure`](.claude/skills/test-case-structure/SKILL.md) | Arrange/act/assert/clean, which layer proves which AC |
-| [`explore-with-mcp`](.claude/skills/explore-with-mcp/SKILL.md) | Mapping a screen or call with the Playwright MCP before automating it |
-| [`debug-test-failure`](.claude/skills/debug-test-failure/SKILL.md) | Reading failures, common causes, re-running |
+| `/automate <requirement or flow>` | Requirement text → verified Playwright test → PR. Gate 1 questionnaire (web/api, coverage, target) → explore → write → verify (live run) → Gate 2 PR. |
+| `/test-fix <spec or title>` | Failing test → root cause → fix without weakening the test. |
 
-## Knowledge base (`.claude/knowledge/`)
+`/automate` agents live in `.claude/agents/automate/` (`explorer`, `test-writer`, `verifier`); the command owns both human gates.
 
-| Read this | When you |
-|---|---|
-| [`assessment.md`](.claude/knowledge/assessment.md) | need the story, acceptance criteria or deliverables |
-| [`architecture.md`](.claude/knowledge/architecture.md) | need the layers, fixtures, data files and test patterns |
-| [`api/endpoints.md`](.claude/knowledge/api/endpoints.md) | call or test an endpoint (raw spec: `api/openapi.json`, refresh with `npm run api:spec`) |
-| [`ui-map.md`](.claude/knowledge/ui-map.md) | write or fix a locator |
-| [`known-issues.md`](.claude/knowledge/known-issues.md) | see behaviour that looks wrong — it may be a documented defect |
+## Workflow for non-trivial work
 
-## Commands
+YOU MUST: **restate → MCQs → write a plan → wait for approval → implement.** Do not skip steps.
 
-```bash
-npm test                 # setup + UI + API
-npm run test:ui          # UI only (signs in first)
-npm run test:api         # API only
-npx playwright test <file>
-npm run test:report      # HTML report
-npm run typecheck && npm run lint && npm run format:check
-npm run api:spec         # refresh the API knowledge from Swagger
-npm run mcp:setup        # pre-cache Playwright MCP, check GitHub token, list MCP servers
-```
+## Standards
 
-Locally the browser is visible; `HEADLESS=true` hides it, `SLOW_MO=500` slows it down. CI is always headless.
+- `.md` files under `.claude/` stay under 100 lines.
+- Agents have one focused responsibility and a structured JSON output.
+- Rules in agents and skills are general; facts about the app under test live only in `.claude/domain/`.
+- No hallucinated locators, endpoints, ids or messages — everything comes from the repo, the live app, or the user.
+
+## Pointers
+
+- **Command:** `.claude/commands/automate.md`
+- **Agents:** `.claude/agents/automate/` · **Skills:** `.claude/skills/<name>/SKILL.md`
+- **Domain (app facts):** `.claude/domain/INDEX.md` — requirements, app map, API notes + `openapi.json`, known issues
+- **Run:** `npm test` · `npm run test:ui` · `npm run test:api` · `npm run test:report` · `npm run api:spec` · `npm run mcp:setup`
+- **Browser:** visible locally; `HEADLESS=true` hides it, `SLOW_MO=500` slows it; CI is headless
