@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "Playwright TypeScript UI + API automation for EventHub (US-114 Book tickets for an event)",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "playwright test",
     "test:ui": "playwright test --project=ui",
     "test:api": "playwright test --project=api",
-    "test:headed": "playwright test --project=ui --headed",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report",
     "typecheck": "tsc --noEmit",
@@ -16,12 +18,6 @@
     "format:check": "prettier --check \"src/**/*.ts\" playwright.config.ts",
     "api:spec": "node scripts/fetch-api-spec.js"
   },
-  "keywords": [
-    "playwright",
-    "typescript",
-    "testing"
-  ],
-  "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.65.0",
