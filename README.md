@@ -170,10 +170,9 @@ The environment is public and shared, so every test cancels the bookings it crea
 5. **Concurrency:** create an event with a few seats, then race two bookings for the last one.
 6. **Accessibility checks** with `@axe-core/playwright`.
 
-**Pipeline and scale**
+**Scale**
 
-7. **GitHub Actions:** static checks, then the UI and API projects, credentials from repository secrets, the HTML report as an artifact.
-8. **One account per worker** (registered in global setup), then parallel runs. Firefox and WebKit projects, and publishing results to the team's test-management tool.
+7. **One account per worker** (registered in global setup), then parallel runs. Firefox and WebKit projects, and publishing results to the team's test-management tool.
 
 ---
 
