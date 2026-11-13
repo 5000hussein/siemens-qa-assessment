@@ -21,7 +21,6 @@ export class LoginPage extends BasePage {
   // ========== LOGIN ACTIONS ==========
   async navigate(): Promise<void> {
     await this.navigateTo(ROUTES.login);
-    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async login(email: string, password: string): Promise<void> {
