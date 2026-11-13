@@ -48,8 +48,13 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
   ],
 
   // ========== API ==========
+  // Connection: close = a fresh connection per call. In CI the server drops idle connections during long UI steps,
+  // and reusing one gave "socket hang up" (ECONNRESET) on the next API call.
   apiRequest: async ({ apiToken }, use) => {
-    const ctx = await request.newContext({ baseURL: apiBaseUrl, extraHTTPHeaders: { Authorization: `Bearer ${apiToken}` } });
+    const ctx = await request.newContext({
+      baseURL: apiBaseUrl,
+      extraHTTPHeaders: { Authorization: `Bearer ${apiToken}`, Connection: 'close' },
+    });
     await use(ctx);
     await ctx.dispose();
   },

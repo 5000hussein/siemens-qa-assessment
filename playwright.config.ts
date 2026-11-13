@@ -11,7 +11,8 @@ export default defineConfig({
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
   workers: 1,
-  reporter: [['list'], ['html', { open: 'never' }]],
+  // In CI the github reporter also writes every failure as an annotation on the run page
+  reporter: isCI ? [['github'], ['list'], ['html', { open: 'never' }]] : [['list'], ['html', { open: 'never' }]],
 
   use: {
     baseURL: baseUrl,

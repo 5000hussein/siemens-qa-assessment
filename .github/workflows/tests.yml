@@ -40,6 +40,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Check secrets are set
+        run: |
+          missing=0
+          for name in EVENTHUB_USER_EMAIL EVENTHUB_USER_PASSWORD; do
+            if [ -z "${!name}" ]; then echo "::error::Repository secret $name is not set (Settings > Secrets and variables > Actions)"; missing=1; fi
+          done
+          exit $missing
       - run: npm ci
       - run: npm run test:api
       - uses: actions/upload-artifact@v4
@@ -66,6 +73,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Check secrets are set
+        run: |
+          missing=0
+          for name in EVENTHUB_USER_EMAIL EVENTHUB_USER_PASSWORD; do
+            if [ -z "${!name}" ]; then echo "::error::Repository secret $name is not set (Settings > Secrets and variables > Actions)"; missing=1; fi
+          done
+          exit $missing
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run test:ui
