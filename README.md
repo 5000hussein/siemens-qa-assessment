@@ -49,7 +49,7 @@ The environment is public and shared, so every test cancels the bookings it crea
 
 ### Continuous integration (GitHub Actions)
 
-`.github/workflows/tests.yml` runs on every push, on every pull request, and from the **Run workflow** button in the Actions tab:
+`.github/workflows/EventHub QA - UI & API Tests.yml` runs on every push, on every pull request, and from the **Run workflow** button in the Actions tab:
 
 1. **Static checks:** typecheck, lint, format check.
 2. **API tests**, after the static checks pass.
@@ -393,7 +393,7 @@ Used only for checking (`npm run typecheck`). Playwright runs TypeScript directl
 | `.env.example`                | Template for `.env`: only the two credentials                                                                      |
 | `.gitignore`                  | Keeps secrets (`.env`, `.auth/`) and generated output out of git                                                   |
 | `.mcp.json`                   | AI tooling only (section 6.5); the test suite doesn't use it                                                       |
-| `.github/workflows/tests.yml` | CI: static checks → API tests → UI tests, reports as artifacts (section 1)                                         |
+| `.github/workflows/EventHub QA - UI & API Tests.yml` | CI: static checks → API tests → UI tests, reports as artifacts (section 1)                                         |
 
 ### 6.5 AI tooling (`.claude/`)
 

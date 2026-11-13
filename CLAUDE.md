@@ -50,4 +50,4 @@ YOU MUST: **restate → MCQs → write a plan → wait for approval → implemen
 - **README:** how to run, story review, coverage, key decisions, framework guide.
 - **Run:** `npm test` · `npm run test:ui` · `npm run test:api` · `npm run test:report` · `npm run api:spec`
 - **Browser:** visible locally; `HEADLESS=true` hides it, `SLOW_MO=500` slows it; CI is headless.
-- **CI:** `.github/workflows/tests.yml` — static checks → API → UI (sequential: shared account), credentials from repository secrets.
+- **CI:** `.github/workflows/EventHub QA - UI & API Tests.yml` — static checks → API → UI (sequential: shared account), credentials from repository secrets.
