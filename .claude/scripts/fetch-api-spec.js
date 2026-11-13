@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const INIT_URL = 'https://api.eventhub.rahulshettyacademy.com/api/docs/swagger-ui-init.js';
-const SPEC_FILE = path.join(__dirname, '..', '.claude', 'domain', 'openapi.json');
+const SPEC_FILE = path.join(__dirname, '..', 'domain', 'openapi.json');
 
 function extractSwaggerDoc(source) {
   const start = source.indexOf('{', source.indexOf('"swaggerDoc"'));

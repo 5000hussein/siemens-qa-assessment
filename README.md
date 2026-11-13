@@ -45,13 +45,13 @@ npm test                      # setup + UI + API: 25 tests, about 45 s
 src/
   core/      BasePage.ts (parent of all pages) · fixtures.ts (every fixture: auth, pages, API clients, cleanup)
   pages/     CommonPage → EventsPage, EventDetailsPage, MyBookingsPage, BookingDetailsPage · LoginPage
-  api/       BaseApi → AuthApi, EventsApi, BookingsApi · types.ts
+  api/       BaseApi → AuthApi, EventsApi, BookingsApi
   config/    environment.ts (env, paths, credentials) · routes.ts
   data/      environments.json · assertions.json (expected texts) · test_data/*.json
   utils/     jsonHelper.ts · timeouts.ts · format.ts
   tests/     setup/ (sign-in) · ui/<area>/ · api/<resource>/
 docs/        story-review.md
-.claude/     AI tooling: /automate command, agents, skills, domain knowledge (section 6)
+.claude/     AI tooling: /automate command, agents, skills, domain knowledge, scripts/ (API spec download) (section 6)
 ```
 
 ---
@@ -239,7 +239,7 @@ The repo ships a small Claude Code setup. The test suite runs without it.
   4. `verifier` runs the static checks, step coverage, conventions and a live run, with at most 2 fix cycles.
   5. A PR is opened only after approval and a passing live run.
 - **`/test-fix <spec>`** finds the root cause of a failing test and fixes it without weakening the assertion.
-- **`.claude/skills/`** hold the conventions every agent loads. **`.claude/domain/`** holds facts about the app (screen map, API notes, the OpenAPI spec, known issues).
+- **`.claude/skills/`** hold the conventions every agent loads. **`.claude/domain/`** holds facts about the app (screen map, API notes, the OpenAPI spec, known issues). **`.claude/scripts/fetch-api-spec.js`** (`npm run api:spec`) refreshes `openapi.json` from the live Swagger docs.
 - **`.mcp.json`**:
   - `playwright-test`: Chrome, starts signed in from the saved login.
   - `github`: reads `GITHUB_PERSONAL_ACCESS_TOKEN` from the environment.
