@@ -2,7 +2,7 @@ import { test, expect } from '../../../core/baseTest';
 import { readJsonObject, readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { buildBookingInput } from '../../../data/builders/bookingBuilder';
-import { bookingRefPattern, bookingStatuses, successMessages } from '../../../config/assertions';
+import { patterns, bookingStatuses, successMessages } from '../../../data/assertions.json';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
 const customer = readJsonObject(bookingsDataPath, `${currentEnv}.customer`);
@@ -27,7 +27,7 @@ test.describe('AC5: POST /api/bookings creates a booking', () => {
       quantity,
       status: bookingStatuses.confirmed,
     });
-    expect(body.data.bookingRef).toMatch(bookingRefPattern);
+    expect(body.data.bookingRef).toMatch(new RegExp(patterns.bookingRef));
     expect(Number(body.data.totalPrice)).toBe(Number(event.price) * quantity);
   });
 

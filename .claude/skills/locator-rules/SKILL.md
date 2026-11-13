@@ -30,7 +30,7 @@ React often splits one visible string into several text nodes (`$300 × 1 item` 
 
 - Field names describe the element, not its type alone: `submitButton`, `emailInput`, `confirmDialog`, `totalPrice`.
 - Methods: `clickX`, `fillX`, `setX`, `openX`, `navigate`, `verifyX`, `getX`.
-- Keep expected texts out of locators when they are assertions; put them in `assertions.ts` and pass them in.
+- Keep expected texts out of locators when they are assertions; put them in `assertions.json` and pass them in.
 
 ## Waiting
 

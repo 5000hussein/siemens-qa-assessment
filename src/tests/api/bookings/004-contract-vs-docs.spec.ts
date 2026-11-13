@@ -1,6 +1,7 @@
 import { test, expect } from '../../../core/baseTest';
 import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
+import { patterns } from '../../../data/assertions.json';
 import { buildBookingInput } from '../../../data/builders/bookingBuilder';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
@@ -14,7 +15,7 @@ test.describe('API contract vs documentation (known defects)', () => {
     test.fail(true, 'Docs say EVT-XXXXXX; API returns <first letter of event title>-XXXXXX, e.g. D-0VYXU6');
     const event = await eventsApi.findBookableEvent(minSeats);
     const booking = await bookingsApi.createBooking(buildBookingInput(event.id, quantity));
-    expect(booking.bookingRef).toMatch(/^EVT-[A-Z0-9]{6}$/);
+    expect(booking.bookingRef).toMatch(new RegExp(patterns.documentedBookingRef));
   });
 
   test('totalPrice is a number as documented', async ({ eventsApi, bookingsApi }) => {

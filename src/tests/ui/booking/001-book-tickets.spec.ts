@@ -1,7 +1,7 @@
 import { test, expect } from '../../../core/baseTest';
 import { readJsonObject, readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
-import { bookingRefPattern, validationMessages } from '../../../config/assertions';
+import { patterns, validationMessages } from '../../../data/assertions.json';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
 const customer = readJsonObject(bookingsDataPath, `${currentEnv}.customer`);
@@ -34,7 +34,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
 
     // Step 4: Confirmation with booking reference (AC1) and the same total (AC2)
     const bookingRef = await eventDetailsPage.getBookingReference();
-    expect(bookingRef).toMatch(bookingRefPattern);
+    expect(bookingRef).toMatch(new RegExp(patterns.bookingRef));
     await eventDetailsPage.verifyConfirmation(customer.name, quantity, event.price);
 
     // Step 5: The backend holds the same booking (also registers it for teardown cleanup)

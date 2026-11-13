@@ -1,7 +1,7 @@
 import { type Page, type Locator, expect } from '@playwright/test';
 import { CommonPage } from './CommonPage';
 import { ROUTES } from '../config/routes';
-import { successMessages } from '../config/assertions';
+import { successMessages } from '../data/assertions.json';
 import { formatPrice } from '../utils/format';
 import { TIMEOUTS } from '../utils/timeouts';
 

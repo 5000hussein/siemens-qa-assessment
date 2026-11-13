@@ -75,10 +75,10 @@ Every test cleans up the bookings it creates, so the shared environment is left 
 ```
 src/
   api/          BaseApi → AuthApi, EventsApi, BookingsApi  (+ types.ts)
-  pages/        BasePage → CommonPage → EventsPage, EventDetailsPage, MyBookingsPage ; BasePage → LoginPage
+  pages/        BasePage → CommonPage → EventsPage, EventDetailsPage, MyBookingsPage, BookingDetailsPage ; BasePage → LoginPage
   core/         baseTest.ts — every fixture: pages, API clients, auth token, cleanup
-  config/       environment.ts (env, paths, credentials), routes.ts, assertions.ts (expected texts)
-  data/         environments.json, test_data/bookings.json, builders/bookingBuilder.ts
+  config/       environment.ts (env, paths, credentials), routes.ts
+  data/         environments.json, assertions.json (expected texts), test_data/bookings.json, builders/bookingBuilder.ts
   tests/        setup/ (auth), ui/booking/, api/bookings/
 ```
 
@@ -94,7 +94,7 @@ src/
 | **UI results cross-checked against the API.** After a UI booking, the test reads it back by reference and checks the event, quantity and total. | Shows that what the user sees matches what was actually stored. |
 | **Known defects are executable** (`test.fail` with a reason). | They stay visible in every run without turning the run red. When a defect is fixed, the test fails and tells you to remove the marker. |
 | **Single worker.** | All tests share one account and three sandbox events, so seat-count assertions would race. The tests are already independent: give each worker its own account and set `workers` > 1. |
-| **Built on the team's ADGM framework conventions** (BasePage/CommonPage, JSON data helpers, `assertions.ts`, `TIMEOUTS`, ESLint/Prettier rules). | Familiar to the team. Deliberate differences: no PageFactory layer, framework-owned auth, `.env` credentials, API clients instead of fixtures in the test folder, independent tests instead of chained ones. |
+| **Built on the team's ADGM framework conventions** (BasePage/CommonPage, JSON data helpers, `assertions.json`, `TIMEOUTS`, ESLint/Prettier rules). | Familiar to the team. Deliberate differences: no PageFactory layer, framework-owned auth, `.env` credentials, API clients instead of fixtures in the test folder, independent tests instead of chained ones. |
 | **Role-based locators first**, then `data-testid`, then CSS/XPath; no static waits (enforced by ESLint). | Resilient to styling changes and closer to how users and assistive tech see the page. |
 
 ### AI tooling inside the repo

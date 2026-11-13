@@ -14,7 +14,7 @@ user-invocable: false
 | API clients | `src/api/<Name>Api.ts` extending `BaseApi`; types in `src/api/types.ts` |
 | Registration | One fixture line in `src/core/baseTest.ts`: `xPage: async ({ page }, use) => { await use(new XPage(page)); }` |
 | Test data | `src/data/test_data/<area>.json` keyed by env (`PROD`); builders in `src/data/builders/` |
-| Expected texts / routes | `src/config/assertions.ts` / `src/config/routes.ts` |
+| Expected texts / routes | `src/data/assertions.json` / `src/config/routes.ts` |
 | Specs | `src/tests/ui/<area>/NNN-<flow>.spec.ts`, `src/tests/api/<resource>/NNN-<behaviour>.spec.ts` |
 | Timeouts | `TIMEOUTS` from `src/utils/timeouts.ts` |
 
@@ -25,7 +25,7 @@ user-invocable: false
 - `readonly` locators grouped under `// ========== SECTION ==========`, initialised in the constructor.
 - Action methods: `waitFor({ state: 'visible' })` → action → wait for the resulting state.
 - `verify*(values…)` methods own every assertion that needs computation or formatting.
-- Text used only to **find** an element (a button name, a field label, a section heading used as an anchor) lives in the page object's locator. Text the test **asserts** on (messages, statuses, dialog titles) lives in `assertions.ts` and is passed in or imported.
+- Text used only to **find** an element (a button name, a field label, a section heading used as an anchor) lives in the page object's locator. Text the test **asserts** on (messages, statuses, dialog titles) lives in `assertions.json` and is passed in or imported.
 - One class per screen; add to it rather than creating a sibling. Never model destructive shared-account actions.
 
 ## API clients

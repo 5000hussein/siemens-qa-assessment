@@ -2,7 +2,7 @@ import { test, expect } from '../../../core/baseTest';
 import { readJsonObject, readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { buildBookingInput } from '../../../data/builders/bookingBuilder';
-import { bookingStatuses } from '../../../config/assertions';
+import { bookingStatuses } from '../../../data/assertions.json';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
 const customer = readJsonObject(bookingsDataPath, `${currentEnv}.customer`);

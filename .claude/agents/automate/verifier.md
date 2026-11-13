@@ -23,7 +23,7 @@ From the command: `layer`, the numbered steps, the writer's file list and test n
 3. **Conventions** (per `framework-conventions` and `locator-rules`):
    - no login, auth header, pinned id, literal test data or computed value in a spec
    - new classes registered as a fixture in `baseTest`
-   - expected texts in `assertions.ts`, routes in `routes.ts`, `TIMEOUTS` only, no `waitForTimeout`
+   - expected texts in `assertions.json`, routes in `routes.ts`, `TIMEOUTS` only, no `waitForTimeout`
    - locator priority respected; created records are cleaned up
    → `FAIL — [CONVENTION]: <file>:<line> <rule>`.
 4. **Reuse:** a new method duplicating an existing one → `FAIL — [REUSE]: "<new>" duplicates "<existing>" in <file>`.

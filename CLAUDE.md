@@ -8,7 +8,7 @@ Full conventions live in the **`framework-conventions`** and **`locator-rules`**
 
 - **Grep before writing.** Search `src/pages/`, `src/api/`, `src/data/` for an existing method, locator or data key before creating one. Reuse > re-invent.
 - **Tests never log in.** Auth is owned by the framework (setup project + storage state for UI, token fixture for API).
-- **No literals in specs.** Data from `src/data/**/*.json`, expected texts from `assertions.ts`, routes from `routes.ts`, timeouts from `TIMEOUTS`.
+- **No literals in specs.** Data from `src/data/**/*.json`, expected texts from `assertions.json`, routes from `routes.ts`, timeouts from `TIMEOUTS`.
 - **Own your data.** Every test arranges its own records, never pins ids, and leaves nothing behind (tracked by the API clients, cleaned in fixture teardown).
 - **Selector priority:** role → test id → label/text → `#id` → XPath. Every locator matches exactly one element.
 - **No static waits.** No `waitForTimeout`; `waitFor` before interacting; web-first `expect`.
