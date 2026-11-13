@@ -1,28 +1,47 @@
-# EventHub QA Automation
+<div align="center">
 
-UI and API test automation for **EventHub**, built with **Playwright + TypeScript**, for the flow **US-114: Book tickets for an event**.
+# 🎟️ EventHub QA Automation
 
-**EventHub** is a ticket-booking platform. A signed-in user browses events, books 1–10 tickets by entering their name, email and phone, gets a booking reference, sees the booking under **My Bookings**, and can cancel it. Everything the web UI does is also available through a REST API.
+**UI + API test automation for US-114 "Book tickets for an event"**
 
-|                    |                                                      |
-| ------------------ | ---------------------------------------------------- |
-| Web app            | https://eventhub.rahulshettyacademy.com              |
-| API docs (Swagger) | https://api.eventhub.rahulshettyacademy.com/api/docs |
+[![CI](https://github.com/5000hussein/siemens-qa-assessment/actions/workflows/EventHub%20QA%20-%20UI%20%26%20API%20Tests.yml/badge.svg)](https://github.com/5000hussein/siemens-qa-assessment/actions)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?logo=playwright&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?logo=nodedotjs&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-25-blue)
+![Claude Code](https://img.shields.io/badge/AI-Claude%20Code-D97757?logo=anthropic&logoColor=white)
 
-**Contents:**
+[Web app](https://eventhub.rahulshettyacademy.com) · [API docs (Swagger)](https://api.eventhub.rahulshettyacademy.com/api/docs) · [CI runs](https://github.com/5000hussein/siemens-qa-assessment/actions)
 
-1. [How to run](#1-how-to-run)
-2. [Story review](#2-story-review)
-3. [What is tested and why](#3-what-is-tested-and-why)
-4. [Key decisions](#4-key-decisions)
-5. [What I'd do with more time](#5-what-id-do-with-more-time)
-6. [Framework guide](#6-framework-guide) (layout, how it works, rules, configuration, AI tooling)
+</div>
 
 ---
 
-## 1. How to run
+**EventHub** is a ticket-booking platform. A signed-in user browses events, books 1–10 tickets by entering their name, email and phone, gets a booking reference, sees the booking under **My Bookings**, and can cancel it. Everything the web UI does is also available through a REST API.
 
-**Prerequisites:** Node.js 20+ and an EventHub account. The credentials for this submission are in the submission form, never in the repository.
+|        🧪 Tests         |       🖥️ UI       |       🔌 API        |     🐞 Defects found      |       ⏱️ Runtime        |
+| :--------------------: | :--------------: | :----------------: | :----------------------: | :--------------------: |
+| **25** (incl. 1 setup) | **6** end-to-end | **18** (2 defects) | **7** app vs story/docs  | **~45 s** on one worker |
+
+## 📑 Contents
+
+| #   | Section                                                         | What you'll find                                         |
+| --- | --------------------------------------------------------------- | -------------------------------------------------------- |
+| 1   | [🚀 How to run](#how-to-run)                                    | Setup, commands, CI                                      |
+| 2   | [🔍 Story review](#story-review)                                | Questions for the PO, app vs story/docs, assumptions     |
+| 3   | [🎯 What is tested and why](#what-is-tested)                    | Coverage per acceptance criterion and the reasoning      |
+| 4   | [🧭 Key decisions](#key-decisions)                              | Architecture choices and why                             |
+| 5   | [🔮 What I'd do with more time](#more-time)                     | AI tooling, coverage, scale, secrets                     |
+| 6   | [📘 Framework guide](#framework-guide)                          | Layout, how it works, rules, configuration, AI tooling   |
+
+---
+
+<a id="how-to-run"></a>
+
+## 🚀 1. How to run
+
+> [!IMPORTANT]
+> **Prerequisites:** Node.js 20+ and an EventHub account. The credentials for this submission are in the submission form, never in the repository.
 
 ```bash
 npm ci
@@ -43,34 +62,43 @@ npm test                      # setup + UI + API: 25 tests, about 45 s
 | `npm run typecheck && npm run lint && npm run format:check` | Static checks                                                       |
 | `npm run api:spec`                                          | Re-download the API spec into `.claude/domain/openapi.json`         |
 
-**Using your own account:** the tests book the event named in `src/data/test_data/bookings.json` (`eventName`, currently "Hollywood Monsoon Night — Los Angeles"). If your account doesn't have an event with that title, put one of your own event titles there.
+> [!TIP]
+> **Using your own account:** the tests book the event named in `src/data/test_data/bookings.json` (`eventName`, currently "Hollywood Monsoon Night — Los Angeles"). If your account doesn't have an event with that title, put one of your own event titles there.
 
 The environment is public and shared, so every test cancels the bookings it creates, even when it fails.
 
-### Continuous integration (GitHub Actions)
+### ⚙️ Continuous integration (GitHub Actions)
 
-`.github/workflows/EventHub QA - UI & API Tests.yml` runs on every push, on every pull request, and from the **Run workflow** button in the Actions tab:
+`.github/workflows/EventHub QA - UI & API Tests.yml` runs on every push, on every pull request, and from the **Run workflow** button in the Actions tab.
 
-1. **Static checks:** typecheck, lint, format check.
-2. **API tests**, after the static checks pass.
-3. **UI tests**, after the API job, even when the API tests fail. They don't run in parallel with the API job because both book the same event on the same account, and the seat-count checks would read each other's bookings.
+```mermaid
+flowchart LR
+    T([push · pull request · Run workflow]) --> S[🧹 Static checks<br/>typecheck · lint · format]
+    S --> A[🔌 API tests]
+    A --> U[🖥️ UI tests]
+    A -. report .-> RA[(api-report)]
+    U -. report .-> RU[(ui-report)]
+```
 
-**Run workflow** (Actions tab → EventHub QA - UI & API Tests → Run workflow) has two options:
+- **UI tests run after the API job**, even when the API tests fail. They don't run in parallel with it because both book the same event on the same account, and the seat-count checks would read each other's bookings.
+- Each test job uploads its HTML report as an artifact. Failures also appear as **annotations** on the run page.
+- In CI the browser is headless, a failed test is retried once, and a forgotten `test.only` fails the run.
+
+**Run workflow** (Actions tab → EventHub QA - UI & API Tests → Run workflow) has two options. Push and pull-request runs always use the defaults.
 
 | Option    | Choices            | Default |
 | --------- | ------------------ | ------- |
 | `suite`   | `all`, `api`, `ui` | `all`   |
 | `retries` | `0`, `1`, `2`, `3` | `1`     |
 
-Push and pull-request runs always use the defaults.
-
-Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`). In CI the browser is headless, a failed test is retried once, and a forgotten `test.only` fails the run.
-
-**One-time setup:** in the repository on GitHub, open **Settings → Secrets and variables → Actions** and add `EVENTHUB_USER_EMAIL` and `EVENTHUB_USER_PASSWORD`.
+> [!NOTE]
+> **One-time setup:** in the repository on GitHub, open **Settings → Secrets and variables → Actions** and add `EVENTHUB_USER_EMAIL` and `EVENTHUB_USER_PASSWORD`. If one is missing, the job stops straight away and names it.
 
 ---
 
-## 2. Story review
+<a id="story-review"></a>
+
+## 🔍 2. Story review
 
 > **US-114:** As a visitor to EventHub, I want to book tickets for an event, so that I can attend it.
 >
@@ -80,7 +108,7 @@ Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`)
 > - **AC4:** I can cancel a booking.
 > - **AC5:** The same works through the API using `POST /api/bookings`.
 
-### What is missing or unclear: questions for the Product Owner
+### ❓ What is missing or unclear: questions for the Product Owner
 
 | #   | Area             | Question                                                                                                                                                                                                                       |
 | --- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -97,7 +125,7 @@ Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`)
 | Q11 | Events           | Can past events be booked? (See D5.)                                                                                                                                                                                           |
 | Q12 | Non-functional   | Concurrency (two users taking the last seats), accessibility, mobile and performance targets?                                                                                                                                  |
 
-### Where the application differs from the story or the docs
+### 🐞 Where the application differs from the story or the docs
 
 | #   | Observation                                                                                                                                                                                                              | Where           | Evidence in this repo                                                                                  |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------- | ------------------------------------------------------------------------------------------------------ |
@@ -109,7 +137,7 @@ Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`)
 | D6  | **The phone rule differs:** the UI says "Enter a valid 10-digit phone"; the API only requires `minLength 10` on a free-text string.                                                                                      | UI vs API       | manual check (the API test's invalid phone `123` breaks both rules, so it doesn't show the difference) |
 | D7  | **No feedback after cancelling:** the card disappears without a message or toast.                                                                                                                                        | UI              | none                                                                                                   |
 
-### Assumptions made to keep going
+### 📝 Assumptions made to keep going
 
 - A signed-in user counts as a "visitor".
 - The observed reference format is acceptable.
@@ -118,18 +146,20 @@ Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`)
 
 ---
 
-## 3. What is tested and why
+<a id="what-is-tested"></a>
+
+## 🎯 3. What is tested and why
 
 **25 tests:** 1 setup (sign-in), 6 UI, 18 API (2 of them known-defect checks).
 
-| AC                                   | UI                                                                                                                         | API                                                                                                                           |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| AC1 booking, confirmation, reference | Full flow from the events list, reference format checked                                                                   | 201 response shape and reference format                                                                                       |
-| AC1 negative                         | Invalid name, email and phone show messages and create no booking                                                          | 400 for quantity 0 and 11, short name, bad email, short phone, empty body; 404 unknown event; 401 no token                    |
-| AC2 price × quantity                 | Summary at 1, 3 and 10 tickets, plus the confirmation total                                                                | `totalPrice` for 3 and 10 tickets                                                                                             |
-| AC3 in My Bookings                   | The card shows ref, event, quantity, total and status; View Details shows ref, status, event, customer and payment summary | Read back by id, by reference and from the list                                                                               |
-| AC4 cancel                           | Cancel through the dialog; gone after a reload; backend returns 404; seats restored                                        | 200 then 404; seats restored; cancel twice returns 404; unknown id returns 404; no token returns 401 and the booking survives |
-| AC5 via API                          | n/a                                                                                                                        | All of the above, plus available seats drop by the booked quantity                                                            |
+| AC                                      | 🖥️ UI                                                                                                                      | 🔌 API                                                                                                                        |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| ✅ AC1 booking, confirmation, reference | Full flow from the events list, reference format checked                                                                   | 201 response shape and reference format                                                                                       |
+| ✅ AC1 negative                         | Invalid name, email and phone show messages and create no booking                                                          | 400 for quantity 0 and 11, short name, bad email, short phone, empty body; 404 unknown event; 401 no token                    |
+| ✅ AC2 price × quantity                 | Summary at 1, 3 and 10 tickets, plus the confirmation total                                                                | `totalPrice` for 3 and 10 tickets                                                                                             |
+| ✅ AC3 in My Bookings                   | The card shows ref, event, quantity, total and status; View Details shows ref, status, event, customer and payment summary | Read back by id, by reference and from the list                                                                               |
+| ✅ AC4 cancel                           | Cancel through the dialog; gone after a reload; backend returns 404; seats restored                                        | 200 then 404; seats restored; cancel twice returns 404; unknown id returns 404; no token returns 401 and the booking survives |
+| ✅ AC5 via API                          | n/a                                                                                                                        | All of the above, plus available seats drop by the booked quantity                                                            |
 
 **Why this split:**
 
@@ -137,7 +167,7 @@ Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`)
 - **Rules and edge cases** (limits, invalid input, auth, error codes, seat arithmetic) are cheaper and more stable through the API, so most combinations live there.
 - Each AC has at least one positive UI test and one positive API test. Negative cases sit on the boundaries the app enforces: 0, 1, 10 and 11 tickets.
 
-**Not covered, on purpose:**
+**🚫 Not covered, on purpose:**
 
 - registration, which is outside US-114
 - admin event management, which changes shared data
@@ -146,7 +176,29 @@ Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`)
 
 ---
 
-## 4. Key decisions
+<a id="key-decisions"></a>
+
+## 🧭 4. Key decisions
+
+```mermaid
+flowchart TB
+    subgraph Specs["🧪 Specs (src/tests)"]
+        UI[ui/*.spec.ts]
+        API[api/*.spec.ts]
+    end
+    F[["🔧 fixtures.ts<br/>auth · pages · API clients · cleanup"]]
+    subgraph Layer["Reusable layer"]
+        P[📄 Page objects<br/>BasePage → CommonPage → pages]
+        C[🔌 API clients<br/>BaseApi → Auth/Events/Bookings]
+    end
+    D[(🗂️ JSON data<br/>test data · expected texts · environments)]
+    UI --> F
+    API --> F
+    F --> P
+    F --> C
+    UI -.reads.-> D
+    API -.reads.-> D
+```
 
 | Decision                                                                                         | Why                                                                                                                                   |
 | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -167,9 +219,11 @@ Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`)
 
 ---
 
-## 5. What I'd do with more time
+<a id="more-time"></a>
 
-**AI tooling (`.claude/`)**
+## 🔮 5. What I'd do with more time
+
+### 🤖 AI tooling (`.claude/`)
 
 1. **More AI processes with better orchestration.** Today `/automate` runs one straight line: explorer → test-writer → verifier. Next steps:
    - a **planner** agent that turns a story into a reviewed test-case list before any code is written
@@ -178,7 +232,7 @@ Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`)
    - an orchestrator that runs independent steps in parallel (for example, UI and API exploration together)
 2. **Higher accuracy.** Each agent returns structured JSON that is checked before the next step. The domain knowledge gets refreshed automatically from the live app and the OpenAPI spec. Every generated test must pass several live runs before it is accepted, and an evaluation set of known requirements and expected tests measures the agents over time.
 
-**Test coverage**
+### 🧪 Test coverage
 
 3. **More UI coverage:**
    - the full booking journey across screens in one flow
@@ -191,19 +245,21 @@ Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`)
 5. **Concurrency:** create an event with a few seats, then race two bookings for the last one.
 6. **Accessibility checks** with `@axe-core/playwright`.
 
-**Scale**
+### 📈 Scale
 
 7. **One account per worker** (registered in global setup), then parallel runs. Firefox and WebKit projects, and publishing results to the team's test-management tool.
 
-**Secrets**
+### 🔐 Secrets
 
 8. **Encrypted credentials in the repo** with a library such as [dotenvx](https://dotenvx.com). The `.env` file is committed **encrypted**, and each machine decrypts it at run time with a private key it keeps locally (CI keeps it as one repository secret). Credentials then stay versioned with the code, a new teammate needs only the key instead of every value, and nothing readable sits in the repository.
 
 ---
 
-## 6. Framework guide
+<a id="framework-guide"></a>
 
-### 6.1 Repo layout
+## 📘 6. Framework guide
+
+### 📁 6.1 Repo layout
 
 ```
 src/
@@ -214,24 +270,36 @@ src/
   data/      environments.json · assertions.json (expected texts) · test_data/*.json
   utils/     jsonHelper.ts · timeouts.ts · format.ts
   tests/     setup/ (sign-in) · ui/<area>/ · api/<resource>/
-.github/     workflows/tests.yml: CI (section 1)
+.github/     workflows/EventHub QA - UI & API Tests.yml: CI (section 1)
 .claude/     AI tooling: /automate command, agents, skills, domain knowledge, scripts (section 6.5)
 ```
 
 A spec's folder decides its project: `src/tests/ui/**` runs in the `ui` project (browser, signed in), and `src/tests/api/**` in the `api` project (no browser).
 
-### 6.2 How the framework works
+### 🛠️ 6.2 How the framework works
 
-#### Authorization is handled by the framework, not by tests
+#### 🔑 Authorization is handled by the framework, not by tests
 
 No test contains a login step.
+
+```mermaid
+flowchart LR
+    subgraph UIflow["🖥️ UI"]
+        SU[setup project<br/>logs in once in the browser] --> ST[(.auth/user.json<br/>saved session)]
+        ST --> UT[every UI test<br/>starts signed in]
+    end
+    subgraph APIflow["🔌 API"]
+        TK[apiToken worker fixture<br/>POST /auth/login once] --> RQ[apiRequest fixture<br/>Authorization: Bearer token]
+        RQ --> AT[every API client]
+    end
+```
 
 - **UI:** the `setup` project signs in **once** through the real login page and saves the browser state (cookies and `localStorage`, which holds the token) to `.auth/user.json`. The `ui` project depends on `setup` and loads that file, so every UI test starts signed in.
 - **API:** a **worker fixture** (`apiToken`) calls `POST /auth/login` once. The `apiRequest` fixture adds `Authorization: Bearer <token>` to every request, and every API client is built on it. `anonymousBookingsApi` has no token and is used only for 401 checks.
 
 If sign-in changes, one file changes.
 
-#### Fixtures
+#### 🔧 Fixtures
 
 A fixture is an object Playwright creates for a test. The test names what it needs and gets it ready to use:
 
@@ -243,11 +311,16 @@ Each fixture is a small recipe in `src/core/fixtures.ts`:
 
 ```ts
 apiRequest: async ({ apiToken }, use) => {
-  const ctx = await request.newContext({ baseURL: apiBaseUrl, extraHTTPHeaders: { Authorization: `Bearer ${apiToken}` } }); // setup
+  const ctx = await request.newContext({
+    baseURL: apiBaseUrl,
+    extraHTTPHeaders: { Authorization: `Bearer ${apiToken}`, Connection: 'close' },
+  });                   // setup
   await use(ctx);       // the test runs here
   await ctx.dispose();  // teardown: after the test, even if it failed
 },
 ```
+
+`Connection: 'close'` opens a fresh connection for every call. In CI the server drops idle connections during long UI steps, and reusing one caused "socket hang up" errors.
 
 |                      | Test fixture (default)                                              | Worker fixture (`{ scope: 'worker' }`)                 |
 | -------------------- | ------------------------------------------------------------------- | ------------------------------------------------------ |
@@ -255,14 +328,14 @@ apiRequest: async ({ apiToken }, use) => {
 | Shared between tests | no                                                                  | yes                                                    |
 | Used for             | pages, API clients, the HTTP client: anything that must start clean | `apiToken`: expensive to get, read-only, safe to share |
 
-#### Page objects
+#### 📄 Page objects
 
 - `BasePage` holds the browser tab and small helpers (`navigateTo`, `click`, `typeText`).
 - `CommonPage` adds the header shared by every signed-in screen.
 - Each screen has one class that holds its **locators** (how to find elements) and its **actions and checks** (`openEvent`, `cancelBooking`, `verifyPaymentSummary`).
 - Specs never use raw locators; they call page methods.
 
-#### API clients
+#### 🔌 API clients
 
 One class per topic, like the pages: `AuthApi`, `EventsApi`, `BookingsApi`. Each method calls **one endpoint and returns the response**, nothing else:
 
@@ -287,7 +360,7 @@ expect(response.status()).toBe(201);
 
 `{ ...createBookingBody, eventId: event.id }` copies the request body from the JSON and adds the event id, which is only known at runtime.
 
-#### Cleanup
+#### 🧹 Cleanup
 
 The environment is shared and public, so nothing a test creates may be left behind, even when the test fails. Tests that create a booking request the `bookingCleanup` fixture and register the id as soon as it exists:
 
@@ -298,14 +371,14 @@ bookingCleanup.track(booking.id);
 
 The fixture's teardown runs after the test, pass or fail, and cancels every tracked booking. A 404 means the test already cancelled it itself. A booking made through the UI is looked up by its reference (`getBookingByRef`) right after the confirmation and tracked the same way.
 
-#### Test data and expected texts
+#### 🗂️ Test data and expected texts
 
 - **Inputs** live in `src/data/test_data/*.json`, keyed by environment (`PROD`). Single values are read with `readJsonValue`, and whole objects such as request bodies with `readJsonObject`.
 - **The event is chosen by name** (`eventName`). Each test calls `GET /events?search=<name>`, asserts 200, and asserts that the first result's title is that name. The search is fuzzy, so this check makes a missing or different event fail with a clear message.
 - **Expected texts** (messages, dialog titles, statuses, patterns) live in `src/data/assertions.json` and are imported directly.
 - **The environment** is chosen with `ENV` (default `PROD`). A new environment needs a new block in `environments.json` and the test data files, not code.
 
-#### Waiting and timeouts
+#### ⏳ Waiting and timeouts
 
 Every browser or HTTP action is asynchronous, so each step is `await`ed, and a lint rule catches any missing `await`. Playwright **auto-waits** before every click or fill, and `expect(...)` retries until it passes, so there are no fixed sleeps.
 
@@ -315,11 +388,11 @@ Every browser or HTTP action is asynchronous, so each step is `await`ed, and a l
 | `expect.timeout`                 | 10 s          | each single assertion                      |
 | `TIMEOUTS.short / medium / long` | 5 / 15 / 30 s | individual waits inside page objects       |
 
-#### Known defects are tests
+#### 🐞 Known defects are tests
 
 When the app contradicts its documentation, the documented behaviour is still asserted, inside `test.fail(true, '<expected X, actual Y>')`. The run stays green while the defect exists and turns red the day it is fixed, which is the signal to remove the marker. See `src/tests/api/bookings/004-contract-vs-docs.spec.ts`.
 
-### 6.3 Repo rules and conventions
+### 📏 6.3 Repo rules and conventions
 
 #### Rules
 
@@ -333,7 +406,10 @@ When the app contradicts its documentation, the documented behaviour is still as
 8. **Never commit secrets.** `.env` and `.auth/` are git-ignored.
 9. **Green before commit:** typecheck, lint, format check, and the affected tests pass.
 
-#### Naming
+<details>
+<summary><b>🏷️ Naming conventions</b></summary>
+
+<br/>
 
 | Style                                      | Used for                                           | Examples                                                            |
 | ------------------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------- |
@@ -347,7 +423,12 @@ When the app contradicts its documentation, the documented behaviour is still as
 
 The class `LoginPage` is the blueprint; the fixture `loginPage` is the object built from it (`new LoginPage(page)`).
 
-#### Adding something
+</details>
+
+<details>
+<summary><b>➕ Adding a screen, an endpoint or a test</b></summary>
+
+<br/>
 
 | To add      | Do this                                                                                                                                                                                         |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -355,9 +436,14 @@ The class `LoginPage` is the blueprint; the fixture `loginPage` is the object bu
 | An endpoint | Add methods to the matching client in `src/api/`, or a new `XApi extends BaseApi` plus one fixture line                                                                                         |
 | A test      | Put data in JSON and texts in `assertions.json`, then write `src/tests/ui/<area>/NNN-<flow>.spec.ts` or `src/tests/api/<resource>/NNN-<behaviour>.spec.ts`                                      |
 
-### 6.4 Configuration explained
+</details>
 
-#### `playwright.config.ts`
+### ⚙️ 6.4 Configuration explained
+
+<details>
+<summary><b><code>playwright.config.ts</code></b></summary>
+
+<br/>
 
 | Key                              | Value                     | Why                                                                                         |
 | -------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------- |
@@ -366,13 +452,18 @@ The class `LoginPage` is the blueprint; the fixture `loginPage` is the object bu
 | `fullyParallel`, `workers`       | `false`, `1`              | One test at a time (section 4)                                                              |
 | `forbidOnly`                     | `true` in CI              | A forgotten `test.only` fails the CI run instead of silently skipping the rest              |
 | `retries`                        | 1 in CI, 0 locally        | Absorbs network blips on a public environment; the report still marks the test "flaky"      |
-| `reporter`                       | `list` + `html`           | One line per test in the terminal, plus a full HTML report                                  |
+| `reporter`                       | `list` + `html` (+ `github` in CI) | One line per test, a full HTML report, and in CI each failure as an annotation on the run page |
 | `use.baseURL`                    | from `environments.json`  | Pages navigate with short paths (`/bookings`)                                               |
 | `use.trace / screenshot / video` | kept on failure only      | Evidence for failures; fast passing runs                                                    |
 | `use.headless`, `slowMo`         | `HEADLESS`, `SLOW_MO`     | Visible browser locally, hidden in CI                                                       |
 | `projects`                       | `setup` → `ui`, and `api` | `setup` signs in once; `ui` depends on it and loads the saved login; `api` needs no browser |
 
-#### `tsconfig.json`
+</details>
+
+<details>
+<summary><b><code>tsconfig.json</code></b></summary>
+
+<br/>
 
 Used only for checking (`npm run typecheck`). Playwright runs TypeScript directly, with no build step.
 
@@ -387,26 +478,44 @@ Used only for checking (`npm run typecheck`). Playwright runs TypeScript directl
 | `forceConsistentCasingInFileNames` | Import case must match the file name, which Linux CI requires                        |
 | `include: src/**/*`                | Only framework code is checked                                                       |
 
-#### Other files
+</details>
 
-| File                          | Purpose                                                                                                            |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `eslint.config.mjs`           | TypeScript rules plus Playwright rules: no missing `await`, no `waitForTimeout`, no `test.only`, no `page.pause()` |
-| `.prettierrc.json`            | Formatting: single quotes, 140-character lines                                                                     |
-| `package.json`                | Scripts (section 1) and dev dependencies; Node 20+                                                                 |
-| `.env.example`                | Template for `.env`: only the two credentials                                                                      |
-| `.gitignore`                  | Keeps secrets (`.env`, `.auth/`) and generated output out of git                                                   |
-| `.mcp.json`                   | AI tooling only (section 6.5); the test suite doesn't use it                                                       |
+<details>
+<summary><b>Other files</b></summary>
+
+<br/>
+
+| File                                                 | Purpose                                                                                                            |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `eslint.config.mjs`                                  | TypeScript rules plus Playwright rules: no missing `await`, no `waitForTimeout`, no `test.only`, no `page.pause()` |
+| `.prettierrc.json`                                   | Formatting: single quotes, 140-character lines                                                                     |
+| `package.json`                                       | Scripts (section 1) and dev dependencies; Node 20+                                                                 |
+| `.env.example`                                       | Template for `.env`: only the two credentials                                                                      |
+| `.gitignore`                                         | Keeps secrets (`.env`, `.auth/`) and generated output out of git                                                   |
+| `.mcp.json`                                          | AI tooling only (section 6.5); the test suite doesn't use it                                                       |
 | `.github/workflows/EventHub QA - UI & API Tests.yml` | CI: static checks → API tests → UI tests, reports as artifacts (section 1)                                         |
 
-### 6.5 AI tooling (`.claude/`)
+</details>
+
+### 🤖 6.5 AI tooling (`.claude/`)
 
 The repo ships a small Claude Code package. The test suite runs without it.
+
+```mermaid
+flowchart LR
+    R([📝 requirement]) --> G1{{Gate 1<br/>web or API?<br/>coverage? target?}}
+    G1 --> E[🔎 explorer<br/>live app / API]
+    E --> W[✍️ test-writer<br/>page objects · spec · data]
+    W --> V[✅ verifier<br/>checks + live run]
+    V -- FAIL, max 2 cycles --> W
+    V -- PASS --> G2{{Gate 2<br/>user approves}}
+    G2 --> PR([🔀 pull request])
+```
 
 | Part                                   | What it does                                                                                                                                                      |
 | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `CLAUDE.md` (repo root)                | Always-on rules for any AI agent working in the repo, and a map of the package                                                                                    |
-| `commands/automate.md`                 | `/automate <requirement or flow>`: turns a requirement into a verified test and a PR (flow below)                                                                 |
+| `commands/automate.md`                 | `/automate <requirement or flow>`: turns a requirement into a verified test and a PR (flow above)                                                                 |
 | `agents/automate/explorer` (Opus)      | Read-only. Web: walks the steps in a live, signed-in Chrome through the Playwright MCP and returns verified locators. API: makes live calls and records responses |
 | `agents/automate/test-writer` (Opus)   | Writes page objects or API clients, the spec and its JSON data, and registers fixtures                                                                            |
 | `agents/automate/verifier` (Sonnet)    | Runs typecheck, lint and format, checks step coverage and conventions, runs the tests live; reports PASS or FAIL, never edits                                     |
@@ -418,11 +527,10 @@ The repo ships a small Claude Code package. The test suite runs without it.
 | `settings.json`                        | Allows the Playwright MCP and test commands; denies reading `.env` and `.auth/`                                                                                   |
 | `.mcp.json` (repo root)                | `playwright-test`: Chrome, starts signed in from the saved login. `github`: opens the PR; reads `GITHUB_PERSONAL_ACCESS_TOKEN` from the environment               |
 
-**`/automate` flow:**
+---
 
-1. **Gate 1:** a questionnaire asks web or API, the coverage (happy path or with negatives) and the target file.
-2. A preflight checks dependencies, credentials, the saved login, the MCP servers and the GitHub token.
-3. `explorer` maps the live page or API.
-4. `test-writer` writes the code.
-5. `verifier` checks it and runs it live, with at most 2 fix cycles.
-6. **Gate 2:** a PR is opened only after the user approves and the live run passes.
+<div align="center">
+
+Built with 🎭 Playwright · 🟦 TypeScript · 🤖 Claude Code
+
+</div>
