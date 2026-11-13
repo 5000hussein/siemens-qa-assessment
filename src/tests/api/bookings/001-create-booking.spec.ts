@@ -1,4 +1,4 @@
-import { test, expect } from '../../../core/baseTest';
+import { test, expect } from '../../../core/fixtures';
 import { readJsonObject, readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { buildBookingInput } from '../../../data/builders/bookingBuilder';

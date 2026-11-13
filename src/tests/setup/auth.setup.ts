@@ -1,4 +1,4 @@
-import { test as setup } from '../../core/baseTest';
+import { test as setup } from '../../core/fixtures';
 import { authStatePath, getUserCredentials } from '../../config/environment';
 
 // Runs once before the UI project; every UI test starts already signed in from this storage state

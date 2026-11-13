@@ -12,7 +12,7 @@ user-invocable: false
 |---|---|
 | Page objects | `src/pages/<Name>Page.ts` (signed-in screens extend `CommonPage`, others `BasePage`) |
 | API clients | `src/api/<Name>Api.ts` extending `BaseApi`; types in `src/api/types.ts` |
-| Registration | One fixture line in `src/core/baseTest.ts`: `xPage: async ({ page }, use) => { await use(new XPage(page)); }` |
+| Registration | One fixture line in `src/core/fixtures.ts`: `xPage: async ({ page }, use) => { await use(new XPage(page)); }` |
 | Test data | `src/data/test_data/<area>.json` keyed by env (`PROD`); builders in `src/data/builders/` |
 | Expected texts / routes | `src/data/assertions.json` / `src/config/routes.ts` |
 | Specs | `src/tests/ui/<area>/NNN-<flow>.spec.ts`, `src/tests/api/<resource>/NNN-<behaviour>.spec.ts` |
@@ -45,7 +45,7 @@ user-invocable: false
 ## Specs
 
 ```ts
-import { test, expect } from '../../../core/baseTest';
+import { test, expect } from '../../../core/fixtures.ts';
 import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, <area>DataPath } from '../../../config/environment';
 

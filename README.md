@@ -76,7 +76,7 @@ Every test cleans up the bookings it creates, so the shared environment is left 
 src/
   api/          BaseApi → AuthApi, EventsApi, BookingsApi  (+ types.ts)
   pages/        BasePage → CommonPage → EventsPage, EventDetailsPage, MyBookingsPage, BookingDetailsPage ; BasePage → LoginPage
-  core/         baseTest.ts — every fixture: pages, API clients, auth token, cleanup
+  core/         fixtures.ts — every fixture: pages, API clients, auth token, cleanup
   config/       environment.ts (env, paths, credentials), routes.ts
   data/         environments.json, assertions.json (expected texts), test_data/bookings.json, builders/bookingBuilder.ts
   tests/        setup/ (auth), ui/booking/, api/bookings/
@@ -86,7 +86,7 @@ src/
 |---|---|
 | **Authorization is owned by the framework.** A `setup` project signs in through the UI once and saves storage state, so UI tests start signed in. A worker-scoped `apiToken` fixture logs in through `/auth/login` once, and the `api` fixture injects `Authorization: Bearer`. No test logs in. | This is what the brief asks for. Login logic lives in one place, so an auth change touches one file, and suites run faster. |
 | **Separate layers: specs → page objects / API clients → data.** | Specs read like the acceptance criteria. Locators and HTTP details are each written once. |
-| **One fixture file** (`baseTest.ts`): every page object and API client is a one-line fixture. | Adding a screen or endpoint is a recipe: create a class, add one fixture line. Specs only ask for what they need. |
+| **One fixture file** (`fixtures.ts`): every page object and API client is a one-line fixture. | Adding a screen or endpoint is a recipe: create a class, add one fixture line. Specs only ask for what they need. |
 | **All test data in JSON** (`src/data/test_data/*.json`, keyed by environment), plus a `buildBookingInput()` builder. | No literals in specs. A new environment means a new JSON key, not code changes. |
 | **Events chosen at runtime** (`findBookableEvent(minSeats)`). | Event IDs differ per sandbox account and seats change over time, so hard-coded IDs would break. |
 | **Every test creates its own data and cleans up.** `BookingsApi` tracks every booking it creates, and fixture teardown cancels them. UI-created bookings are registered with `trackByRef`. | The environment is shared and public (the brief asks for clean-up). Tests can run in any order and be re-run without manual resets. |
