@@ -17,6 +17,7 @@ test.describe('AC5: POST /api/bookings creates a booking', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking
     const response = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
@@ -39,6 +40,7 @@ test.describe('AC5: POST /api/bookings creates a booking', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking with the maximum quantity
     const response = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id, quantity: maxQuantity });
@@ -57,6 +59,7 @@ test.describe('AC5: POST /api/bookings creates a booking', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
@@ -90,6 +93,7 @@ test.describe('AC5: POST /api/bookings creates a booking', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });

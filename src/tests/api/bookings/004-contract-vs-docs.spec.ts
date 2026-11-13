@@ -21,6 +21,7 @@ test.describe('API contract vs documentation (known defects)', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking
     const response = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
@@ -38,6 +39,7 @@ test.describe('API contract vs documentation (known defects)', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking
     const response = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });

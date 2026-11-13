@@ -21,6 +21,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Open the event from the events list
     await eventsPage.navigate();
@@ -64,6 +65,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Open the event
     await eventDetailsPage.navigate(event.id);
@@ -83,6 +85,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Open the event, enter invalid details and confirm
     await eventDetailsPage.navigate(event.id);

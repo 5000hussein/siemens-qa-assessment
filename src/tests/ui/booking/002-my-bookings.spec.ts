@@ -18,6 +18,7 @@ test.describe('US-114 My Bookings (UI)', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Book tickets in the UI
     await eventDetailsPage.navigate(event.id);
@@ -49,6 +50,7 @@ test.describe('US-114 My Bookings (UI)', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking through the API: this test is about cancelling, not creating
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
@@ -87,6 +89,7 @@ test.describe('US-114 My Bookings (UI)', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking through the API
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });

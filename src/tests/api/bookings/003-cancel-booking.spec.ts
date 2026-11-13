@@ -17,6 +17,7 @@ test.describe('AC4: DELETE /api/bookings/{id} cancels a booking', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
@@ -41,6 +42,7 @@ test.describe('AC4: DELETE /api/bookings/{id} cancels a booking', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
@@ -68,6 +70,7 @@ test.describe('AC4: DELETE /api/bookings/{id} cancels a booking', () => {
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
     const event = (await eventsResponse.json()).data[0];
+    expect(event?.title).toBe(eventName);
 
     // Create the booking
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
