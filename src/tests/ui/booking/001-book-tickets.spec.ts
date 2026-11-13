@@ -24,7 +24,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     event = (await eventsResponse.json()).data.find((e: EventItem) => e.availableSeats >= minSeats);
   });
 
-  test('AC1 + AC2: booking shows a confirmation with a reference and total = price × tickets', async ({
+  test('AC1 + AC2: Check the user is able to book tickets and see a confirmation with a booking reference and total = price × tickets', async ({
     bookingsApi,
     eventsPage,
     eventDetailsPage,
@@ -59,7 +59,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     expect((await bookingsApi.cancelBooking(booking.id)).status()).toBe(200);
   });
 
-  test('AC2: total updates for the minimum and maximum ticket count', async ({ eventDetailsPage }) => {
+  test('AC2: Check the user is able to see the total update for the minimum and maximum ticket count', async ({ eventDetailsPage }) => {
     await eventDetailsPage.navigate(event.id);
 
     await eventDetailsPage.verifyPriceSummary(event.price, minQuantity);
@@ -70,7 +70,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     await expect(eventDetailsPage.incrementTicketsButton).toBeDisabled();
   });
 
-  test('AC1 negative: invalid customer details are rejected and no booking is created', async ({ eventDetailsPage }) => {
+  test('AC1 negative: Check the user is not able to book with invalid customer details', async ({ eventDetailsPage }) => {
     await eventDetailsPage.navigate(event.id);
 
     await eventDetailsPage.fillCustomerDetails(invalidName, invalidEmail, invalidPhone);

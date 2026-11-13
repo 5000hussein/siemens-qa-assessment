@@ -28,7 +28,7 @@ test.describe('API contract vs documentation (known defects)', () => {
     expect((await bookingsApi.cancelBooking(bookingId)).status()).toBe(200);
   });
 
-  test('bookingRef follows the documented EVT-XXXXXX format', async ({ bookingsApi }) => {
+  test('Check the user is able to get a booking reference in the documented EVT-XXXXXX format', async ({ bookingsApi }) => {
     test.fail(true, 'Docs say EVT-XXXXXX; API returns <first letter of event title>-XXXXXX, e.g. D-0VYXU6');
     const response = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
     expect(response.status()).toBe(201);
@@ -38,7 +38,7 @@ test.describe('API contract vs documentation (known defects)', () => {
     expect(booking.bookingRef).toMatch(new RegExp(patterns.documentedBookingRef));
   });
 
-  test('totalPrice is a number as documented', async ({ bookingsApi }) => {
+  test('Check the user is able to get totalPrice as a number as documented', async ({ bookingsApi }) => {
     test.fail(true, 'Schema says number (float); API returns a string, e.g. "900"');
     const response = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
     expect(response.status()).toBe(201);

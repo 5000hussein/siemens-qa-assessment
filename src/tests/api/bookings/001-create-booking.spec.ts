@@ -20,7 +20,9 @@ test.describe('AC5: POST /api/bookings creates a booking', () => {
     event = (await eventsResponse.json()).data.find((e: EventItem) => e.availableSeats >= minSeats);
   });
 
-  test('201 with booking reference, customer details and total = price × quantity', async ({ bookingsApi }) => {
+  test('Check the user is able to create a booking and get 201 with a booking reference, customer details and total = price × quantity', async ({
+    bookingsApi,
+  }) => {
     const response = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
 
     expect(response.status()).toBe(201);
@@ -41,7 +43,7 @@ test.describe('AC5: POST /api/bookings creates a booking', () => {
     expect((await bookingsApi.cancelBooking(body.data.id)).status()).toBe(200);
   });
 
-  test('the maximum of 10 tickets is accepted and priced correctly', async ({ bookingsApi }) => {
+  test('Check the user is able to book the maximum of 10 tickets at the correct total', async ({ bookingsApi }) => {
     const response = await bookingsApi.createBooking({
       eventId: event.id,
       customerName,
@@ -57,7 +59,7 @@ test.describe('AC5: POST /api/bookings creates a booking', () => {
     expect((await bookingsApi.cancelBooking(booking.id)).status()).toBe(200);
   });
 
-  test('the booking can be read back by id, by reference and from the list (AC3 via API)', async ({ bookingsApi }) => {
+  test('AC3: Check the user is able to get the created booking by id, by reference and from the bookings list', async ({ bookingsApi }) => {
     const createResponse = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
     expect(createResponse.status()).toBe(201);
     const booking = (await createResponse.json()).data;
@@ -78,7 +80,10 @@ test.describe('AC5: POST /api/bookings creates a booking', () => {
     expect((await bookingsApi.cancelBooking(booking.id)).status()).toBe(200);
   });
 
-  test('available seats decrease by the booked quantity', async ({ eventsApi, bookingsApi }) => {
+  test('Check the user is able to book tickets and the event available seats decrease by the booked quantity', async ({
+    eventsApi,
+    bookingsApi,
+  }) => {
     const createResponse = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
     expect(createResponse.status()).toBe(201);
     const booking = (await createResponse.json()).data;

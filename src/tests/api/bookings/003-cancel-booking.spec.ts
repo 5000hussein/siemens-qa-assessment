@@ -20,7 +20,10 @@ test.describe('AC4 via API: DELETE /api/bookings/{id}', () => {
     event = (await eventsResponse.json()).data.find((e: EventItem) => e.availableSeats >= minSeats);
   });
 
-  test('cancels the booking, removes it and restores the seats', async ({ eventsApi, bookingsApi }) => {
+  test('Check the user is able to cancel a booking, the booking is removed and the seats are restored', async ({
+    eventsApi,
+    bookingsApi,
+  }) => {
     const createResponse = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
     expect(createResponse.status()).toBe(201);
     const booking = (await createResponse.json()).data;
@@ -35,7 +38,7 @@ test.describe('AC4 via API: DELETE /api/bookings/{id}', () => {
     expect((await eventResponse.json()).data.availableSeats).toBe(event.availableSeats);
   });
 
-  test('cancelling the same booking twice returns 404 the second time', async ({ bookingsApi }) => {
+  test('Check the user is not able to cancel the same booking twice (404)', async ({ bookingsApi }) => {
     const createResponse = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
     expect(createResponse.status()).toBe(201);
     const booking = (await createResponse.json()).data;
@@ -44,11 +47,14 @@ test.describe('AC4 via API: DELETE /api/bookings/{id}', () => {
     expect((await bookingsApi.cancelBooking(booking.id)).status()).toBe(404);
   });
 
-  test('unknown booking id returns 404', async ({ bookingsApi }) => {
+  test('Check the user is not able to cancel a booking that does not exist (404)', async ({ bookingsApi }) => {
     expect((await bookingsApi.cancelBooking(notFoundBookingId)).status()).toBe(404);
   });
 
-  test('request without a token returns 401 and the booking survives', async ({ anonymousBookingsApi, bookingsApi }) => {
+  test('Check the user is not able to cancel a booking without a token (401) and the booking stays', async ({
+    anonymousBookingsApi,
+    bookingsApi,
+  }) => {
     const createResponse = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
     expect(createResponse.status()).toBe(201);
     const booking = (await createResponse.json()).data;

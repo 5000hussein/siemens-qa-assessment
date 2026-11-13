@@ -4,11 +4,11 @@ UI and API test automation for **EventHub**, built with **Playwright + TypeScrip
 
 **EventHub** is a ticket-booking platform. A signed-in user browses events (conferences, concerts, sports, workshops, festivals), books 1–10 tickets by entering their name, email and phone, gets a booking reference, sees the booking under **My Bookings**, and can cancel it. Everything the web UI does is also available through a REST API.
 
-| | |
-|---|---|
-| Web app | https://eventhub.rahulshettyacademy.com |
-| API docs (Swagger) | https://api.eventhub.rahulshettyacademy.com/api/docs |
-| **Story review, PO questions, coverage per AC** | **[docs/story-review.md](docs/story-review.md)** |
+|                                                 |                                                      |
+| ----------------------------------------------- | ---------------------------------------------------- |
+| Web app                                         | https://eventhub.rahulshettyacademy.com              |
+| API docs (Swagger)                              | https://api.eventhub.rahulshettyacademy.com/api/docs |
+| **Story review, PO questions, coverage per AC** | **[docs/story-review.md](docs/story-review.md)**     |
 
 Each account is its own sandbox: its own events and bookings. The environment is public and shared, so every test cleans up what it creates.
 
@@ -25,17 +25,17 @@ cp .env.example .env          # set EVENTHUB_USER_EMAIL and EVENTHUB_USER_PASSWO
 npm test                      # setup + UI + API: 25 tests, about 45 s
 ```
 
-| Command | What it does |
-|---|---|
-| `npm run test:ui` | UI tests (the `setup` project signs in first) |
-| `npm run test:api` | API tests only, no browser |
-| `npx playwright test <file>` | One spec file |
-| `npm run test:debug` | Step through a test in the Playwright Inspector |
-| `npm run test:report` | Open the HTML report (screenshot, video and trace for each failure) |
-| `HEADLESS=true npm test` | Hide the browser locally (visible by default, always hidden in CI) |
-| `SLOW_MO=500 npm run test:ui` | Slow every action by 500 ms to watch the run |
-| `npm run typecheck && npm run lint && npm run format:check` | Static checks |
-| `npm run api:spec` | Re-download the API spec into `.claude/domain/openapi.json` |
+| Command                                                     | What it does                                                        |
+| ----------------------------------------------------------- | ------------------------------------------------------------------- |
+| `npm run test:ui`                                           | UI tests (the `setup` project signs in first)                       |
+| `npm run test:api`                                          | API tests only, no browser                                          |
+| `npx playwright test <file>`                                | One spec file                                                       |
+| `npm run test:debug`                                        | Step through a test in the Playwright Inspector                     |
+| `npm run test:report`                                       | Open the HTML report (screenshot, video and trace for each failure) |
+| `HEADLESS=true npm test`                                    | Hide the browser locally (visible by default, always hidden in CI)  |
+| `SLOW_MO=500 npm run test:ui`                               | Slow every action by 500 ms to watch the run                        |
+| `npm run typecheck && npm run lint && npm run format:check` | Static checks                                                       |
+| `npm run api:spec`                                          | Re-download the API spec into `.claude/domain/openapi.json`         |
 
 ---
 
@@ -85,11 +85,11 @@ apiRequest: async ({ apiToken }, use) => {
 },
 ```
 
-| | Test fixture (default) | Worker fixture (`{ scope: 'worker' }`) |
-|---|---|---|
-| Created | before **each** test | **once** per worker |
-| Shared between tests | no | yes |
-| Used for | pages, API clients, the HTTP client: anything that must start clean | `apiToken`: expensive to get, read-only, safe to share |
+|                      | Test fixture (default)                                              | Worker fixture (`{ scope: 'worker' }`)                 |
+| -------------------- | ------------------------------------------------------------------- | ------------------------------------------------------ |
+| Created              | before **each** test                                                | **once** per worker                                    |
+| Shared between tests | no                                                                  | yes                                                    |
+| Used for             | pages, API clients, the HTTP client: anything that must start clean | `apiToken`: expensive to get, read-only, safe to share |
 
 ### Page objects
 
@@ -127,11 +127,11 @@ The environment is shared and public, so every test that creates a booking cance
 
 Every browser or HTTP action is asynchronous, so each step is `await`ed. A lint rule catches any missing `await`. Playwright **auto-waits** before every click or fill, and `expect(...)` retries until it passes, so there are no fixed sleeps.
 
-| Limit | Value | Applies to |
-|---|---|---|
-| `timeout` | 60 s | a whole test (the longest takes about 7 s) |
-| `expect.timeout` | 10 s | each single assertion |
-| `TIMEOUTS.short / medium / long` | 5 / 15 / 30 s | individual waits inside page objects |
+| Limit                            | Value         | Applies to                                 |
+| -------------------------------- | ------------- | ------------------------------------------ |
+| `timeout`                        | 60 s          | a whole test (the longest takes about 7 s) |
+| `expect.timeout`                 | 10 s          | each single assertion                      |
+| `TIMEOUTS.short / medium / long` | 5 / 15 / 30 s | individual waits inside page objects       |
 
 ### Known defects are tests
 
@@ -159,24 +159,25 @@ All tests share one account and a few events. Seat-count checks would race if te
 
 ### Naming
 
-| Style | Used for | Examples |
-|---|---|---|
-| **PascalCase** | classes and types | `LoginPage`, `BookingsApi`, `EventItem`, `Fixtures` |
-| **camelCase** | variables, functions, methods, fixtures, JSON keys | `loginPage`, `bookingsApi`, `verifySignedInAs()`, `successMessages` |
-| **UPPER_CASE** | shared constants | `ROUTES`, `TIMEOUTS` |
-| File named after its class (PascalCase) | one class per file | `LoginPage.ts`, `BookingsApi.ts` |
-| camelCase file | helpers, config, data, fixtures (no class) | `fixtures.ts`, `jsonHelper.ts`, `assertions.json` |
-| kebab-case `NNN-<what>.spec.ts` | test files (`NNN` groups by theme, not run order) | `001-book-tickets.spec.ts` |
+| Style                                      | Used for                                           | Examples                                                            |
+| ------------------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------- |
+| **PascalCase**                             | classes and types                                  | `LoginPage`, `BookingsApi`, `EventItem`, `Fixtures`                 |
+| **camelCase**                              | variables, functions, methods, fixtures, JSON keys | `loginPage`, `bookingsApi`, `verifySignedInAs()`, `successMessages` |
+| **UPPER_CASE**                             | shared constants                                   | `ROUTES`, `TIMEOUTS`                                                |
+| File named after its class (PascalCase)    | one class per file                                 | `LoginPage.ts`, `BookingsApi.ts`                                    |
+| camelCase file                             | helpers, config, data, fixtures (no class)         | `fixtures.ts`, `jsonHelper.ts`, `assertions.json`                   |
+| kebab-case `NNN-<what>.spec.ts`            | test files (`NNN` groups by theme, not run order)  | `001-book-tickets.spec.ts`                                          |
+| `Check the user is (not) able to <action>` | test titles, AC prefix when there is one           | `AC4: Check the user is able to cancel a booking from My Bookings…` |
 
 The class `LoginPage` is the blueprint; the fixture `loginPage` is the object built from it (`new LoginPage(page)`).
 
 ### Adding something
 
-| To add | Do this |
-|---|---|
-| A screen | Create `src/pages/XPage.ts` extending `CommonPage` (or `BasePage` if signed-out), then add one fixture line in `fixtures.ts`: `xPage: async ({ page }, use) => { await use(new XPage(page)); }` |
-| An endpoint | Add methods to the matching client in `src/api/`, or a new `XApi extends BaseApi` plus one fixture line |
-| A test | Put data in JSON and texts in `assertions.json`, then write `src/tests/ui/<area>/NNN-<flow>.spec.ts` or `src/tests/api/<resource>/NNN-<behaviour>.spec.ts` |
+| To add      | Do this                                                                                                                                                                                         |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A screen    | Create `src/pages/XPage.ts` extending `CommonPage` (or `BasePage` if signed-out), then add one fixture line in `fixtures.ts`: `xPage: async ({ page }, use) => { await use(new XPage(page)); }` |
+| An endpoint | Add methods to the matching client in `src/api/`, or a new `XApi extends BaseApi` plus one fixture line                                                                                         |
+| A test      | Put data in JSON and texts in `assertions.json`, then write `src/tests/ui/<area>/NNN-<flow>.spec.ts` or `src/tests/api/<resource>/NNN-<behaviour>.spec.ts`                                      |
 
 ---
 
@@ -184,44 +185,44 @@ The class `LoginPage` is the blueprint; the fixture `loginPage` is the object bu
 
 ### `playwright.config.ts`
 
-| Key | Value | Why |
-|---|---|---|
-| `testDir` | `./src/tests` | Where tests live |
-| `timeout` / `expect.timeout` | 60 s / 10 s | Per test / per assertion (section 3) |
-| `fullyParallel`, `workers` | `false`, `1` | One test at a time (section 3) |
-| `forbidOnly` | `true` in CI | A forgotten `test.only` fails the CI run instead of silently skipping the rest |
-| `retries` | 1 in CI, 0 locally | Absorbs network blips on a public environment; the report still marks the test "flaky" |
-| `reporter` | `list` + `html` | One line per test in the terminal, plus a full HTML report |
-| `use.baseURL` | from `environments.json` | Pages navigate with short paths (`/bookings`) |
-| `use.trace / screenshot / video` | kept on failure only | Evidence for failures; fast passing runs |
-| `use.headless`, `slowMo` | `HEADLESS`, `SLOW_MO` | Visible browser locally, hidden in CI |
-| `projects` | `setup` → `ui`, and `api` | `setup` signs in once; `ui` depends on it and loads the saved login; `api` needs no browser |
+| Key                              | Value                     | Why                                                                                         |
+| -------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------- |
+| `testDir`                        | `./src/tests`             | Where tests live                                                                            |
+| `timeout` / `expect.timeout`     | 60 s / 10 s               | Per test / per assertion (section 3)                                                        |
+| `fullyParallel`, `workers`       | `false`, `1`              | One test at a time (section 3)                                                              |
+| `forbidOnly`                     | `true` in CI              | A forgotten `test.only` fails the CI run instead of silently skipping the rest              |
+| `retries`                        | 1 in CI, 0 locally        | Absorbs network blips on a public environment; the report still marks the test "flaky"      |
+| `reporter`                       | `list` + `html`           | One line per test in the terminal, plus a full HTML report                                  |
+| `use.baseURL`                    | from `environments.json`  | Pages navigate with short paths (`/bookings`)                                               |
+| `use.trace / screenshot / video` | kept on failure only      | Evidence for failures; fast passing runs                                                    |
+| `use.headless`, `slowMo`         | `HEADLESS`, `SLOW_MO`     | Visible browser locally, hidden in CI                                                       |
+| `projects`                       | `setup` → `ui`, and `api` | `setup` signs in once; `ui` depends on it and loads the saved login; `api` needs no browser |
 
 ### `tsconfig.json`
 
 Used only for checking (`npm run typecheck`); Playwright runs TypeScript directly, with no build step.
 
-| Key | Why |
-|---|---|
-| `strict: true` | Full type safety: null handling, no hidden `any` |
-| `target` / `lib` | Modern JavaScript (ES2020) plus browser types (`dom`) for code that runs in the page |
-| `module` / `moduleResolution` | Node-style modules and imports |
-| `esModuleInterop` | Plain `import x from 'pkg'` works for every package |
-| `resolveJsonModule` | Lets `assertions.json` be imported with types |
-| `skipLibCheck` | Doesn't type-check `node_modules` (faster) |
-| `forceConsistentCasingInFileNames` | Import case must match the file name, which Linux CI requires |
-| `include: src/**/*` | Only framework code is checked |
+| Key                                | Why                                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------------------ |
+| `strict: true`                     | Full type safety: null handling, no hidden `any`                                     |
+| `target` / `lib`                   | Modern JavaScript (ES2020) plus browser types (`dom`) for code that runs in the page |
+| `module` / `moduleResolution`      | Node-style modules and imports                                                       |
+| `esModuleInterop`                  | Plain `import x from 'pkg'` works for every package                                  |
+| `resolveJsonModule`                | Lets `assertions.json` be imported with types                                        |
+| `skipLibCheck`                     | Doesn't type-check `node_modules` (faster)                                           |
+| `forceConsistentCasingInFileNames` | Import case must match the file name, which Linux CI requires                        |
+| `include: src/**/*`                | Only framework code is checked                                                       |
 
 ### Other files
 
-| File | Purpose |
-|---|---|
+| File                | Purpose                                                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | `eslint.config.mjs` | TypeScript rules plus Playwright rules: no missing `await`, no `waitForTimeout`, no `test.only`, no `page.pause()` |
-| `.prettierrc.json` | Formatting: single quotes, 140-character lines |
-| `package.json` | Scripts (section 1) and dev dependencies; Node 20+ |
-| `.env.example` | Template for `.env`: only the two credentials |
-| `.gitignore` | Keeps secrets (`.env`, `.auth/`) and generated output out of git |
-| `.mcp.json` | AI tooling only (section 6); the test suite doesn't use it |
+| `.prettierrc.json`  | Formatting: single quotes, 140-character lines                                                                     |
+| `package.json`      | Scripts (section 1) and dev dependencies; Node 20+                                                                 |
+| `.env.example`      | Template for `.env`: only the two credentials                                                                      |
+| `.gitignore`        | Keeps secrets (`.env`, `.auth/`) and generated output out of git                                                   |
+| `.mcp.json`         | AI tooling only (section 6); the test suite doesn't use it                                                         |
 
 ---
 
@@ -246,15 +247,15 @@ The repo ships a small Claude Code setup. The test suite runs without it.
 
 ## 7. Key decisions
 
-| Decision | Why |
-|---|---|
-| Auth in the framework (setup project + token fixture) | Required by the brief; one place to change; faster runs |
-| Specs → page objects / API clients → JSON data | Specs read like the acceptance criteria; locators and HTTP details are written once |
-| One fixture file, one line per page or client | Adding a screen or endpoint is a two-step recipe |
-| Independent tests that create and clean their own data | Shared public environment; any order; re-runnable |
-| Set up through the API, verify on the layer under test | Faster, less flaky, each test proves one thing |
-| UI results cross-checked against the API | What the user sees matches what was stored |
-| Known defects as `test.fail` | Visible in every run without a red build |
+| Decision                                                                           | Why                                                                                                                  |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Auth in the framework (setup project + token fixture)                              | Required by the brief; one place to change; faster runs                                                              |
+| Specs → page objects / API clients → JSON data                                     | Specs read like the acceptance criteria; locators and HTTP details are written once                                  |
+| One fixture file, one line per page or client                                      | Adding a screen or endpoint is a two-step recipe                                                                     |
+| Independent tests that create and clean their own data                             | Shared public environment; any order; re-runnable                                                                    |
+| Set up through the API, verify on the layer under test                             | Faster, less flaky, each test proves one thing                                                                       |
+| UI results cross-checked against the API                                           | What the user sees matches what was stored                                                                           |
+| Known defects as `test.fail`                                                       | Visible in every run without a red build                                                                             |
 | Built on the team's ADGM conventions (BasePage, JSON data, `TIMEOUTS`, lint rules) | Familiar to the team. Differences: no PageFactory layer, framework-owned auth, `.env` credentials, independent tests |
 
 ---

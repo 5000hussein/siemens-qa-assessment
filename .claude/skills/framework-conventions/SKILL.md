@@ -51,12 +51,13 @@ import { currentEnv, <area>DataPath } from '../../../config/environment';
 const quantity = Number(readJsonValue(<area>DataPath, `${currentEnv}.<key>`));
 
 test.describe('<Story or feature>', () => {
-  test('<requirement it proves>', async ({ <fixtures you need> }) => {
+  test('<ACx>: Check the user is able to <action>', async ({ <fixtures you need> }) => {
     // arrange (API) → act (page/client) → verify (page verify* / status + body)
   });
 });
 ```
 
+- Test titles: `Check the user is able to <action>`; negatives: `Check the user is not able to <action> (<status>)`. Prefix the AC when there is one.
 - One behaviour per `test()`; request only the fixtures it uses.
 - No helper functions, computed values or literals in specs. Data-driven `for` loops over JSON values are fine.
 - API: assert the exact status first, then the body. Never accept "any of 4xx".

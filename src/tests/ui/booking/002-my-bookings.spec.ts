@@ -19,7 +19,11 @@ test.describe('US-114 My Bookings (UI)', () => {
     event = (await eventsResponse.json()).data.find((e: EventItem) => e.availableSeats >= minSeats);
   });
 
-  test('AC3: a booking made in the UI appears in My Bookings', async ({ bookingsApi, eventDetailsPage, myBookingsPage }) => {
+  test('AC3: Check the user is able to see a booking made in the UI in My Bookings', async ({
+    bookingsApi,
+    eventDetailsPage,
+    myBookingsPage,
+  }) => {
     await eventDetailsPage.navigate(event.id);
     await eventDetailsPage.bookTickets(quantity, customerName, customerEmail, customerPhone);
     const bookingRef = await eventDetailsPage.getBookingReference();
@@ -33,7 +37,7 @@ test.describe('US-114 My Bookings (UI)', () => {
     expect((await bookingsApi.cancelBooking((await bookingResponse.json()).data.id)).status()).toBe(200);
   });
 
-  test('AC4: a booking can be cancelled from My Bookings and its seats are released', async ({
+  test('AC4: Check the user is able to cancel a booking from My Bookings and its seats are released', async ({
     eventsApi,
     bookingsApi,
     myBookingsPage,
@@ -56,7 +60,7 @@ test.describe('US-114 My Bookings (UI)', () => {
     expect((await eventResponse.json()).data.availableSeats).toBe(event.availableSeats);
   });
 
-  test('View Details shows the booking reference and status, event details, customer details and a payment summary where Total Paid = price per ticket × tickets', async ({
+  test('AC3: Check the user is able to view the booking details: reference, status, event, customer and payment summary', async ({
     bookingsApi,
     myBookingsPage,
     bookingDetailsPage,
