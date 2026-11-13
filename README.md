@@ -47,7 +47,7 @@ src/
   pages/     CommonPage → EventsPage, EventDetailsPage, MyBookingsPage, BookingDetailsPage · LoginPage
   api/       BaseApi → AuthApi, EventsApi, BookingsApi · types.ts
   config/    environment.ts (env, paths, credentials) · routes.ts
-  data/      environments.json · assertions.json (expected texts) · test_data/*.json · builders/
+  data/      environments.json · assertions.json (expected texts) · test_data/*.json
   utils/     jsonHelper.ts · timeouts.ts · format.ts
   tests/     setup/ (sign-in) · ui/<area>/ · api/<resource>/
 docs/        story-review.md
@@ -105,7 +105,7 @@ bookingsApi: async ({ apiRequest }, use) => {
 
 ### Test data and expected texts
 
-- Inputs live in `src/data/test_data/*.json`, keyed by environment (`PROD`), and are read with `readJsonValue` / `readJsonObject`. Request bodies come from `buildBookingInput()`.
+- Inputs live in `src/data/test_data/*.json`, keyed by environment (`PROD`). Each spec reads the values it needs at the top with `readJsonValue` and passes them straight to page or API methods; request bodies are written inline from those values.
 - Expected texts (messages, dialog titles, statuses, patterns) live in `src/data/assertions.json` and are imported directly.
 - Events are **picked at runtime** (`findBookableEvent(minSeats)`) because ids differ per account and seats change.
 
@@ -135,7 +135,7 @@ All tests share one account and a few events. Seat-count checks would race if te
 
 1. **Tests never log in.** Auth comes from the framework.
 2. **No literals in specs.** Data from `src/data/**/*.json`, expected texts from `assertions.json`, routes from `routes.ts`, timeouts from `TIMEOUTS`.
-3. **Specs have no helper functions or computed values.** Computation lives in page `verify*` methods; payloads come from builders.
+3. **Specs have no helper functions or computed values.** Computation lives in page `verify*` methods.
 4. **Every test owns its data:** it creates what it needs, never pins ids, and leaves nothing behind. Never use "Clear all bookings".
 5. **Locator priority:** role and name → test id → label or text → `#id` → XPath. Each locator matches exactly one element, scoped to a parent when text repeats.
 6. **No static waits** (`waitForTimeout` fails lint).

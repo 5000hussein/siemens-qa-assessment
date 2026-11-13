@@ -13,7 +13,7 @@ user-invocable: false
 | Page objects | `src/pages/<Name>Page.ts` (signed-in screens extend `CommonPage`, others `BasePage`) |
 | API clients | `src/api/<Name>Api.ts` extending `BaseApi`; types in `src/api/types.ts` |
 | Registration | One fixture line in `src/core/fixtures.ts`: `xPage: async ({ page }, use) => { await use(new XPage(page)); }` |
-| Test data | `src/data/test_data/<area>.json` keyed by env (`PROD`); builders in `src/data/builders/` |
+| Test data | `src/data/test_data/<area>.json` keyed by env (`PROD`), read in specs with `readJsonValue` |
 | Expected texts / routes | `src/data/assertions.json` / `src/config/routes.ts` |
 | Specs | `src/tests/ui/<area>/NNN-<flow>.spec.ts`, `src/tests/api/<resource>/NNN-<behaviour>.spec.ts` |
 | Timeouts | `TIMEOUTS` from `src/utils/timeouts.ts` |

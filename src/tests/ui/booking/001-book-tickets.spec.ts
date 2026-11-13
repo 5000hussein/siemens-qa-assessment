@@ -1,14 +1,18 @@
 import { test, expect } from '../../../core/fixtures';
-import { readJsonObject, readJsonValue } from '../../../utils/jsonHelper';
+import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { patterns, validationMessages } from '../../../data/assertions.json';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
-const customer = readJsonObject(bookingsDataPath, `${currentEnv}.customer`);
-const invalidCustomer = readJsonObject(bookingsDataPath, `${currentEnv}.invalidCustomer`);
-const quantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.ui.quantity`));
-const singleQuantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.ui.singleQuantity`));
-const maxQuantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.ui.maxQuantity`));
+const customerName = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerName`);
+const customerEmail = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerEmail`);
+const customerPhone = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerPhone`);
+const quantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.booking.quantity`));
+const minQuantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.quantityLimits.min`));
+const maxQuantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.quantityLimits.max`));
+const invalidName = readJsonValue(bookingsDataPath, `${currentEnv}.invalidBooking.customerName`);
+const invalidEmail = readJsonValue(bookingsDataPath, `${currentEnv}.invalidBooking.customerEmail`);
+const invalidPhone = readJsonValue(bookingsDataPath, `${currentEnv}.invalidBooking.customerPhone`);
 
 test.describe('US-114 Book tickets for an event (UI)', () => {
   test('AC1 + AC2: booking shows a confirmation with a reference and total = price × tickets', async ({
@@ -29,13 +33,13 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     await eventDetailsPage.verifyPriceSummary(event.price, quantity);
 
     // Step 3: Enter customer details and confirm
-    await eventDetailsPage.fillCustomerDetails(customer.name, customer.email, customer.phone);
+    await eventDetailsPage.fillCustomerDetails(customerName, customerEmail, customerPhone);
     await eventDetailsPage.clickConfirmBooking();
 
     // Step 4: Confirmation with booking reference (AC1) and the same total (AC2)
     const bookingRef = await eventDetailsPage.getBookingReference();
     expect(bookingRef).toMatch(new RegExp(patterns.bookingRef));
-    await eventDetailsPage.verifyConfirmation(customer.name, quantity, event.price);
+    await eventDetailsPage.verifyConfirmation(customerName, quantity, event.price);
 
     // Step 5: The backend holds the same booking (also registers it for teardown cleanup)
     const booking = await bookingsApi.trackByRef(bookingRef);
@@ -48,7 +52,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     const event = await eventsApi.findBookableEvent(minSeats);
     await eventDetailsPage.navigate(event.id);
 
-    await eventDetailsPage.verifyPriceSummary(event.price, singleQuantity);
+    await eventDetailsPage.verifyPriceSummary(event.price, minQuantity);
     await expect(eventDetailsPage.decrementTicketsButton).toBeDisabled();
 
     await eventDetailsPage.setTicketQuantity(maxQuantity);
@@ -60,7 +64,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     const event = await eventsApi.findBookableEvent(minSeats);
     await eventDetailsPage.navigate(event.id);
 
-    await eventDetailsPage.fillCustomerDetails(invalidCustomer.shortName, invalidCustomer.invalidEmail, invalidCustomer.shortPhone);
+    await eventDetailsPage.fillCustomerDetails(invalidName, invalidEmail, invalidPhone);
     await eventDetailsPage.clickConfirmBooking();
 
     await eventDetailsPage.verifyValidationMessage(validationMessages.booking.name);

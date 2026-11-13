@@ -32,5 +32,3 @@ export type CreateBookingInput = {
   customerPhone: string;
   quantity: number;
 };
-
-export type Customer = Omit<CreateBookingInput, 'eventId' | 'quantity'>;

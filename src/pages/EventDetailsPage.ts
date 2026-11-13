@@ -7,9 +7,7 @@ import { TIMEOUTS } from '../utils/timeouts';
 
 export class EventDetailsPage extends CommonPage {
   // ========== EVENT INFO ==========
-  readonly eventTitle: Locator;
   readonly pricePerTicket: Locator;
-  readonly availableSeats: Locator;
 
   // ========== BOOKING FORM ==========
   readonly bookingForm: Locator;
@@ -32,9 +30,7 @@ export class EventDetailsPage extends CommonPage {
     super(page);
 
     // ========== EVENT INFO ==========
-    this.eventTitle = page.getByRole('heading', { level: 1 });
     this.pricePerTicket = page.locator('//p[normalize-space()="Price per ticket"]/following-sibling::p');
-    this.availableSeats = page.locator('//p[normalize-space()="Available"]/following-sibling::p');
 
     // ========== BOOKING FORM ==========
     this.bookingForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Confirm Booking' }) });

@@ -1,29 +1,26 @@
 {
   "PROD": {
     "minAvailableSeats": 20,
-    "customer": {
-      "name": "QA Automation",
-      "email": "qa.automation@example.com",
-      "phone": "+91 9876543210"
+    "booking": {
+      "customerName": "QA Automation",
+      "customerEmail": "qa.automation@example.com",
+      "customerPhone": "+91 9876543210",
+      "quantity": 3
     },
-    "ui": {
-      "quantity": 3,
-      "singleQuantity": 1,
-      "maxQuantity": 10
+    "quantityLimits": {
+      "min": 1,
+      "max": 10,
+      "belowMin": 0,
+      "aboveMax": 11
     },
-    "api": {
-      "quantity": 2,
-      "maxQuantity": 10,
-      "aboveMaxQuantity": 11,
-      "zeroQuantity": 0,
-      "notFoundEventId": 999999999,
-      "notFoundBookingId": 999999999,
-      "notFoundBookingRef": "X-000000"
+    "invalidBooking": {
+      "customerName": "Q",
+      "customerEmail": "not-an-email",
+      "customerPhone": "123"
     },
-    "invalidCustomer": {
-      "shortName": "Q",
-      "invalidEmail": "not-an-email",
-      "shortPhone": "123"
+    "notFound": {
+      "eventId": 999999999,
+      "bookingId": 999999999
     }
   }
 }

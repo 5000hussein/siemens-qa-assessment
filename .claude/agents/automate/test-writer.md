@@ -18,7 +18,7 @@ From the command: `layer`, `coverage`, `target`, the numbered steps, the explore
 
 ## Process
 
-1. **Reuse first.** Use every page method, client method, builder and data key listed in `manifest.reuse`. Create something new only for a real gap.
+1. **Reuse first.** Use every page method, client method and data key listed in `manifest.reuse`. Create something new only for a real gap.
 2. **Page object / client.** Add new locators and methods to the existing class for that screen or resource; create a new class only for a new screen/resource. Follow `framework-conventions`.
 3. **Register** any new class as a one-line fixture in `src/core/fixtures.ts` (add it to the `Fixtures` type too).
 4. **Data.** Every input value goes in `src/data/test_data/<area>.json` under the env key. Expected texts go in `src/data/assertions.json`; new URLs in `src/config/routes.ts`.

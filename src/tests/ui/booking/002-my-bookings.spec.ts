@@ -1,19 +1,20 @@
 import { test, expect } from '../../../core/fixtures';
-import { readJsonObject, readJsonValue } from '../../../utils/jsonHelper';
+import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
-import { buildBookingInput } from '../../../data/builders/bookingBuilder';
 import { bookingStatuses } from '../../../data/assertions.json';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
-const customer = readJsonObject(bookingsDataPath, `${currentEnv}.customer`);
-const quantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.ui.quantity`));
+const customerName = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerName`);
+const customerEmail = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerEmail`);
+const customerPhone = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerPhone`);
+const quantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.booking.quantity`));
 
 test.describe('US-114 My Bookings (UI)', () => {
   test('AC3: a booking made in the UI appears in My Bookings', async ({ eventsApi, bookingsApi, eventDetailsPage, myBookingsPage }) => {
     const event = await eventsApi.findBookableEvent(minSeats);
 
     await eventDetailsPage.navigate(event.id);
-    await eventDetailsPage.bookTickets(quantity, customer.name, customer.email, customer.phone);
+    await eventDetailsPage.bookTickets(quantity, customerName, customerEmail, customerPhone);
     const bookingRef = await eventDetailsPage.getBookingReference();
     await bookingsApi.trackByRef(bookingRef);
 
@@ -28,7 +29,7 @@ test.describe('US-114 My Bookings (UI)', () => {
   }) => {
     // Setup through the API: this test is about cancelling, not creating
     const event = await eventsApi.findBookableEvent(minSeats);
-    const booking = await bookingsApi.createBooking(buildBookingInput(event.id, quantity));
+    const booking = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
 
     await myBookingsPage.navigate();
     await myBookingsPage.verifyBookingListed(booking.bookingRef, event.title, quantity, event.price, bookingStatuses.confirmed);
@@ -49,7 +50,7 @@ test.describe('US-114 My Bookings (UI)', () => {
     bookingDetailsPage,
   }) => {
     const event = await eventsApi.findBookableEvent(minSeats);
-    const booking = await bookingsApi.createBooking(buildBookingInput(event.id, quantity));
+    const booking = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
 
     await myBookingsPage.navigate();
     await myBookingsPage.verifyBookingListed(booking.bookingRef, event.title, quantity, event.price, bookingStatuses.confirmed);
@@ -57,7 +58,7 @@ test.describe('US-114 My Bookings (UI)', () => {
 
     await bookingDetailsPage.verifyBookingHeader(booking.bookingRef, bookingStatuses.confirmed);
     await bookingDetailsPage.verifyEventDetails(event);
-    await bookingDetailsPage.verifyCustomerDetails(customer.name, customer.email, customer.phone);
+    await bookingDetailsPage.verifyCustomerDetails(customerName, customerEmail, customerPhone);
     await bookingDetailsPage.verifyPaymentSummary(quantity, event.price);
   });
 });
