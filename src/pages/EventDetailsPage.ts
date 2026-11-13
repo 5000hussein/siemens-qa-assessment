@@ -33,8 +33,8 @@ export class EventDetailsPage extends CommonPage {
 
     // ========== EVENT INFO ==========
     this.eventTitle = page.getByRole('heading', { level: 1 });
-    this.pricePerTicket = page.locator('//p[text()="Price per ticket"]/following-sibling::p');
-    this.availableSeats = page.locator('//p[text()="Available"]/following-sibling::p');
+    this.pricePerTicket = page.locator('//p[normalize-space()="Price per ticket"]/following-sibling::p');
+    this.availableSeats = page.locator('//p[normalize-space()="Available"]/following-sibling::p');
 
     // ========== BOOKING FORM ==========
     this.bookingForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Confirm Booking' }) });
@@ -46,7 +46,7 @@ export class EventDetailsPage extends CommonPage {
     this.phoneInput = this.bookingForm.getByRole('textbox', { name: 'Phone Number' });
     // React splits "$300 × 1 ticket" into several text nodes, so match on the span's full text instead of text()
     this.priceBreakdown = this.bookingForm.locator('span', { hasText: '×' });
-    this.totalPrice = this.bookingForm.locator('//span[text()="Total"]/following-sibling::span');
+    this.totalPrice = this.bookingForm.locator('//span[normalize-space()="Total"]/following-sibling::span');
     this.confirmBookingButton = this.bookingForm.getByRole('button', { name: 'Confirm Booking' });
 
     // ========== CONFIRMATION ==========

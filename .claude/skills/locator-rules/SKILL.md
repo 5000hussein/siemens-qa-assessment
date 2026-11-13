@@ -12,7 +12,7 @@ user-invocable: false
 2. **Test id** — `getByTestId('…')` when the app ships `data-testid`
 3. **Label / placeholder / text** — `getByLabel`, `getByPlaceholder`, `getByText` (exact where possible)
 4. **CSS id** — `locator('#stable-id')` for stable, non-generated ids
-5. **XPath** — last resort, e.g. a value next to a label: `//p[text()="Label"]/following-sibling::p`
+5. **XPath** — last resort, e.g. a value next to a label: `//p[normalize-space()="Label"]/following-sibling::p`. Always match text with `normalize-space()`, never `text()`.
 
 Never use generated class names (`.jss256`, `.css-1x2y`) or positional chains (`div > div:nth-child(3)`).
 

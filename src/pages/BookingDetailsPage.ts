@@ -51,7 +51,9 @@ export class BookingDetailsPage extends CommonPage {
 
   // Values are rendered as <span>Label</span><span>Value</span> siblings under each section's h2
   private sectionValue(section: string, label: string): Locator {
-    return this.page.locator(`//h2[text()="${section}"]/following-sibling::div//span[text()="${label}"]/following-sibling::span`);
+    return this.page.locator(
+      `//*[normalize-space()="${section}"]/following-sibling::div//span[normalize-space()="${label}"]/following-sibling::span`
+    );
   }
 
   // The ref is shown twice on the page, so it is scoped to the breadcrumb; the status badge sits next to it
@@ -60,7 +62,7 @@ export class BookingDetailsPage extends CommonPage {
   }
 
   statusBadge(bookingRef: string): Locator {
-    return this.page.locator(`//span[text()="${bookingRef}"]/following-sibling::span`);
+    return this.page.locator(`//span[normalize-space()="${bookingRef}"]/following-sibling::span`);
   }
 
   // ========== VERIFICATIONS ==========

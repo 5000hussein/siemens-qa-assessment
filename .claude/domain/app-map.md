@@ -36,7 +36,7 @@ Heading "Upcoming Events" (h1). Search textbox "Search events, venues…", categ
 ## `/bookings/{id}` → `BookingDetailsPage` (observed 2026-11-12)
 - Header: breadcrumb (`main` → `navigation`) "My Bookings / `<ref>`"; next to the ref a status badge `<span><ref></span><span>confirmed</span>`; h1 event title; "Cancel Booking" button.
 - The ref appears twice on the page — scope to the breadcrumb. No test ids on the status badge or the values.
-- Sections are h2 headings with `<span>Label</span><span>Value</span>` pairs below: value = `//h2[text()="<Section>"]/following-sibling::div//span[text()="<Label>"]/following-sibling::span`.
+- Sections are h2 headings with `<span>Label</span><span>Value</span>` pairs below: value = `//h2[normalize-space()="<Section>"]/following-sibling::div//span[normalize-space()="<Label>"]/following-sibling::span`.
   - **Event Details:** Event, Category, Date, Venue, City
   - **Customer Details:** Name, Email, Phone
   - **Payment Summary:** Tickets, Price per ticket, Total Paid (`$<price × tickets>`)
