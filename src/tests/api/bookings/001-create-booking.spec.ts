@@ -2,7 +2,6 @@ import { test, expect } from '../../../core/fixtures';
 import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { patterns, bookingStatuses, successMessages } from '../../../data/assertions.json';
-import type { EventItem } from '../../../api/types';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
 const customerName = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerName`);
@@ -11,13 +10,13 @@ const customerPhone = readJsonValue(bookingsDataPath, `${currentEnv}.booking.cus
 const quantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.booking.quantity`));
 const maxQuantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.quantityLimits.max`));
 
-let event: EventItem;
+let event: any;
 
 test.describe('AC5: POST /api/bookings creates a booking', () => {
   test.beforeEach(async ({ eventsApi }) => {
     const eventsResponse = await eventsApi.getEvents({ limit: 100 });
     expect(eventsResponse.status()).toBe(200);
-    event = (await eventsResponse.json()).data.find((e: EventItem) => e.availableSeats >= minSeats);
+    event = (await eventsResponse.json()).data.find((e: any) => e.availableSeats >= minSeats);
   });
 
   test('Check the user is able to create a booking and get 201 with a booking reference, customer details and total = price × quantity', async ({

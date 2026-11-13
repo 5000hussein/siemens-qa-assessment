@@ -161,7 +161,7 @@ All tests share one account and a few events. Seat-count checks would race if te
 
 | Style                                      | Used for                                           | Examples                                                            |
 | ------------------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------- |
-| **PascalCase**                             | classes and types                                  | `LoginPage`, `BookingsApi`, `EventItem`, `Fixtures`                 |
+| **PascalCase**                             | classes and types                                  | `LoginPage`, `BookingsApi`, `Fixtures`                              |
 | **camelCase**                              | variables, functions, methods, fixtures, JSON keys | `loginPage`, `bookingsApi`, `verifySignedInAs()`, `successMessages` |
 | **UPPER_CASE**                             | shared constants                                   | `ROUTES`, `TIMEOUTS`                                                |
 | File named after its class (PascalCase)    | one class per file                                 | `LoginPage.ts`, `BookingsApi.ts`                                    |

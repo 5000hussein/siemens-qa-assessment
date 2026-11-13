@@ -15,6 +15,7 @@ export default tseslint.config(
       '@typescript-eslint/await-thenable': 'error',
       '@typescript-eslint/no-misused-promises': 'error',
       '@typescript-eslint/no-unused-vars': ['warn', { args: 'none', ignoreRestSiblings: true }],
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   {

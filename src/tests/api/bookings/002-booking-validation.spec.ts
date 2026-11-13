@@ -2,7 +2,6 @@ import { test, expect } from '../../../core/fixtures';
 import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { validationMessages } from '../../../data/assertions.json';
-import type { EventItem } from '../../../api/types';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
 const customerName = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerName`);
@@ -13,13 +12,13 @@ const belowMinQuantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.q
 const aboveMaxQuantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.quantityLimits.aboveMax`));
 const notFoundEventId = Number(readJsonValue(bookingsDataPath, `${currentEnv}.notFound.eventId`));
 
-let event: EventItem;
+let event: any;
 
 test.describe('AC5 negative: POST /api/bookings rejects invalid requests', () => {
   test.beforeEach(async ({ eventsApi }) => {
     const eventsResponse = await eventsApi.getEvents({ limit: 100 });
     expect(eventsResponse.status()).toBe(200);
-    event = (await eventsResponse.json()).data.find((e: EventItem) => e.availableSeats >= minSeats);
+    event = (await eventsResponse.json()).data.find((e: any) => e.availableSeats >= minSeats);
   });
 
   for (const invalidQuantity of [belowMinQuantity, aboveMaxQuantity]) {

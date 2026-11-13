@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- callers read untyped JSON data files
 export function readJsonFile(filePath: string): any {
   const absolutePath = path.isAbsolute(filePath) ? filePath : path.join(process.cwd(), filePath);
   return JSON.parse(fs.readFileSync(absolutePath, 'utf-8'));

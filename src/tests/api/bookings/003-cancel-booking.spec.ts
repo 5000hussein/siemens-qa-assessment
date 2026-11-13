@@ -2,7 +2,6 @@ import { test, expect } from '../../../core/fixtures';
 import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { successMessages } from '../../../data/assertions.json';
-import type { EventItem } from '../../../api/types';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
 const customerName = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerName`);
@@ -11,13 +10,13 @@ const customerPhone = readJsonValue(bookingsDataPath, `${currentEnv}.booking.cus
 const quantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.booking.quantity`));
 const notFoundBookingId = Number(readJsonValue(bookingsDataPath, `${currentEnv}.notFound.bookingId`));
 
-let event: EventItem;
+let event: any;
 
 test.describe('AC4 via API: DELETE /api/bookings/{id}', () => {
   test.beforeEach(async ({ eventsApi }) => {
     const eventsResponse = await eventsApi.getEvents({ limit: 100 });
     expect(eventsResponse.status()).toBe(200);
-    event = (await eventsResponse.json()).data.find((e: EventItem) => e.availableSeats >= minSeats);
+    event = (await eventsResponse.json()).data.find((e: any) => e.availableSeats >= minSeats);
   });
 
   test('Check the user is able to cancel a booking, the booking is removed and the seats are restored', async ({

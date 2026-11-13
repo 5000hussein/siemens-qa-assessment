@@ -2,7 +2,6 @@ import { test, expect } from '../../../core/fixtures';
 import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { bookingStatuses } from '../../../data/assertions.json';
-import type { EventItem } from '../../../api/types';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
 const customerName = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerName`);
@@ -10,13 +9,13 @@ const customerEmail = readJsonValue(bookingsDataPath, `${currentEnv}.booking.cus
 const customerPhone = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerPhone`);
 const quantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.booking.quantity`));
 
-let event: EventItem;
+let event: any;
 
 test.describe('US-114 My Bookings (UI)', () => {
   test.beforeEach(async ({ eventsApi }) => {
     const eventsResponse = await eventsApi.getEvents({ limit: 100 });
     expect(eventsResponse.status()).toBe(200);
-    event = (await eventsResponse.json()).data.find((e: EventItem) => e.availableSeats >= minSeats);
+    event = (await eventsResponse.json()).data.find((e: any) => e.availableSeats >= minSeats);
   });
 
   test('AC3: Check the user is able to see a booking made in the UI in My Bookings', async ({
@@ -74,7 +73,7 @@ test.describe('US-114 My Bookings (UI)', () => {
     await myBookingsPage.openBookingDetails(booking.bookingRef, booking.id);
 
     await bookingDetailsPage.verifyBookingHeader(booking.bookingRef, bookingStatuses.confirmed);
-    await bookingDetailsPage.verifyEventDetails(event);
+    await bookingDetailsPage.verifyEventDetails(event.title, event.category, event.venue, event.city);
     await bookingDetailsPage.verifyCustomerDetails(customerName, customerEmail, customerPhone);
     await bookingDetailsPage.verifyPaymentSummary(quantity, event.price);
 

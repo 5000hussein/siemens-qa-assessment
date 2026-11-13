@@ -1,6 +1,5 @@
 import { type Page, type Locator, expect } from '@playwright/test';
 import { CommonPage } from './CommonPage';
-import type { EventItem } from '../api/types';
 import { formatPrice } from '../utils/format';
 import { TIMEOUTS } from '../utils/timeouts';
 
@@ -72,12 +71,12 @@ export class BookingDetailsPage extends CommonPage {
   }
 
   // The event date is not asserted: it renders in the browser's local timezone
-  async verifyEventDetails(event: EventItem): Promise<void> {
-    await expect(this.eventTitle).toHaveText(event.title, { timeout: TIMEOUTS.medium });
-    await expect(this.eventName).toHaveText(event.title);
-    await expect(this.eventCategory).toHaveText(event.category);
-    await expect(this.eventVenue).toHaveText(event.venue);
-    await expect(this.eventCity).toHaveText(event.city);
+  async verifyEventDetails(title: string, category: string, venue: string, city: string): Promise<void> {
+    await expect(this.eventTitle).toHaveText(title, { timeout: TIMEOUTS.medium });
+    await expect(this.eventName).toHaveText(title);
+    await expect(this.eventCategory).toHaveText(category);
+    await expect(this.eventVenue).toHaveText(venue);
+    await expect(this.eventCity).toHaveText(city);
   }
 
   async verifyCustomerDetails(name: string, email: string, phone: string): Promise<void> {
