@@ -1,4 +1,4 @@
-name: Tests
+name: EventHub QA - UI & API Tests
 
 on:
   push:

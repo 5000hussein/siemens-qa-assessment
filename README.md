@@ -55,7 +55,7 @@ The environment is public and shared, so every test cancels the bookings it crea
 2. **API tests**, after the static checks pass.
 3. **UI tests**, after the API job, even when the API tests fail. They don't run in parallel with the API job because both book the same event on the same account, and the seat-count checks would read each other's bookings.
 
-**Run workflow** (Actions tab → Tests → Run workflow) has two options:
+**Run workflow** (Actions tab → EventHub QA - UI & API Tests → Run workflow) has two options:
 
 | Option    | Choices            | Default |
 | --------- | ------------------ | ------- |
