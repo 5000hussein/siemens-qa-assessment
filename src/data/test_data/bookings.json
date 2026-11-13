@@ -1,7 +1,7 @@
 {
   "PROD": {
-    "minAvailableSeats": 20,
-    "booking": {
+    "eventName": "Hollywood Monsoon Night — Los Angeles",
+    "createBooking": {
       "customerName": "QA Automation",
       "customerEmail": "qa.automation@example.com",
       "customerPhone": "+91 9876543210",

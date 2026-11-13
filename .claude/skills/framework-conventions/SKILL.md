@@ -38,7 +38,7 @@ user-invocable: false
 
 - Tests never log in. UI: the `setup` project saves storage state; API: the `apiRequest` fixture carries the token and every client fixture is built on it. `anonymousBookingsApi` is only for 401 cases.
 - Each test arranges its own data (through the API when it is not what is being tested), acts on the layer under test, and leaves nothing behind.
-- Pick records at runtime from the API (e.g. "first item with enough capacity"); never pin ids.
+- Records are chosen by name from test data and looked up through the API (e.g. `GET /events?search=<name>`); never pin ids. Request bodies come from test data JSON (`readJsonObject`).
 - Credentials only in `.env`. Never read or print `.env` or `.auth/`.
 
 ## Specs

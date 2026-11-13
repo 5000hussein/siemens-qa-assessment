@@ -6,7 +6,8 @@ export function readJsonFile(filePath: string): any {
   return JSON.parse(fs.readFileSync(absolutePath, 'utf-8'));
 }
 
-export function readJsonValue(filePath: string, keyPath: string): string {
+// Returns whatever is at the key: an object (e.g. a request body), a number or a string
+export function readJsonObject(filePath: string, keyPath: string): any {
   let result = readJsonFile(filePath);
   for (const key of keyPath.split('.')) {
     if (result === null || typeof result !== 'object' || !(key in result)) {
@@ -14,5 +15,9 @@ export function readJsonValue(filePath: string, keyPath: string): string {
     }
     result = result[key];
   }
-  return String(result);
+  return result;
+}
+
+export function readJsonValue(filePath: string, keyPath: string): string {
+  return String(readJsonObject(filePath, keyPath));
 }

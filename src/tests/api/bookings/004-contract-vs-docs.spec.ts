@@ -1,35 +1,33 @@
 import { test, expect } from '../../../core/fixtures';
-import { readJsonValue } from '../../../utils/jsonHelper';
+import { readJsonValue, readJsonObject } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { patterns } from '../../../data/assertions.json';
 
-const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
-const customerName = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerName`);
-const customerEmail = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerEmail`);
-const customerPhone = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerPhone`);
-const quantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.booking.quantity`));
+const eventName = readJsonValue(bookingsDataPath, `${currentEnv}.eventName`);
+const createBookingBody = readJsonObject(bookingsDataPath, `${currentEnv}.createBooking`);
 
-let event: any;
 let bookingId: number;
 
 // Known mismatches between the API docs (Swagger) and the real responses, written up in docs/story-review.md.
 // test.fail() keeps them visible: the run stays green while the defect exists and goes red once it is fixed,
 // which is the signal to delete the annotation.
 test.describe('API contract vs documentation (known defects)', () => {
-  test.beforeEach(async ({ eventsApi }) => {
-    const eventsResponse = await eventsApi.getEvents({ limit: 100 });
-    expect(eventsResponse.status()).toBe(200);
-    event = (await eventsResponse.json()).data.find((e: any) => e.availableSeats >= minSeats);
-  });
-
   // The assertions below are expected to fail, so the booking is cancelled here rather than at the end of the test
   test.afterEach(async ({ bookingsApi }) => {
-    expect((await bookingsApi.cancelBooking(bookingId)).status()).toBe(200);
+    const cancelResponse = await bookingsApi.cancelBooking(bookingId);
+    expect(cancelResponse.status()).toBe(200);
   });
 
-  test('Check the user is able to get a booking reference in the documented EVT-XXXXXX format', async ({ bookingsApi }) => {
+  test('Check the user is able to get a booking reference in the documented EVT-XXXXXX format', async ({ eventsApi, bookingsApi }) => {
     test.fail(true, 'Docs say EVT-XXXXXX; API returns <first letter of event title>-XXXXXX, e.g. D-0VYXU6');
-    const response = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
+
+    // Get the event by name
+    const eventsResponse = await eventsApi.getEvents({ search: eventName });
+    expect(eventsResponse.status()).toBe(200);
+    const event = (await eventsResponse.json()).data[0];
+
+    // Create the booking
+    const response = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
     expect(response.status()).toBe(201);
     const booking = (await response.json()).data;
     bookingId = booking.id;
@@ -37,9 +35,16 @@ test.describe('API contract vs documentation (known defects)', () => {
     expect(booking.bookingRef).toMatch(new RegExp(patterns.documentedBookingRef));
   });
 
-  test('Check the user is able to get totalPrice as a number as documented', async ({ bookingsApi }) => {
+  test('Check the user is able to get totalPrice as a number as documented', async ({ eventsApi, bookingsApi }) => {
     test.fail(true, 'Schema says number (float); API returns a string, e.g. "900"');
-    const response = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
+
+    // Get the event by name
+    const eventsResponse = await eventsApi.getEvents({ search: eventName });
+    expect(eventsResponse.status()).toBe(200);
+    const event = (await eventsResponse.json()).data[0];
+
+    // Create the booking
+    const response = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
     expect(response.status()).toBe(201);
     const booking = (await response.json()).data;
     bookingId = booking.id;

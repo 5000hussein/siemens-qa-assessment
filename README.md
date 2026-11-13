@@ -121,7 +121,8 @@ The environment is shared and public, so every test that creates a booking cance
 
 - Inputs live in `src/data/test_data/*.json`, keyed by environment (`PROD`). Each spec reads the values it needs at the top with `readJsonValue` and passes them straight to page or API methods; request bodies are written inline from those values.
 - Expected texts (messages, dialog titles, statuses, patterns) live in `src/data/assertions.json` and are imported directly.
-- Events are **picked at runtime** in each spec's `beforeEach`: `getEvents()`, assert 200, take the first event with at least `minAvailableSeats` free. Ids differ per account and seats change, so nothing is pinned.
+- The event is chosen **by name** from `bookings.json` (`eventName`): each test calls `GET /events?search=<name>`, asserts 200 and uses that event's id and price. Ids differ per account, so ids are never stored.
+- Request bodies live in `bookings.json` (`createBooking`), read with `readJsonObject` and sent as `{ ...createBookingBody, eventId: event.id }`.
 
 ### Waiting and timeouts
 
