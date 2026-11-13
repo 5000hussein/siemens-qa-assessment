@@ -3,7 +3,23 @@ name: Tests
 on:
   push:
   pull_request:
+  # "Run workflow" button in the Actions tab. Push and PR runs use the defaults: all suites, 1 retry.
   workflow_dispatch:
+    inputs:
+      suite:
+        description: Which tests to run
+        type: choice
+        options: [all, api, ui]
+        default: all
+      retries:
+        description: Retries for a failed test
+        type: choice
+        options: ['0', '1', '2', '3']
+        default: '1'
+
+env:
+  # Empty on push and PR runs, so the shell falls back to 1 (the same as the config's CI value)
+  RETRIES: ${{ inputs.retries }}
 
 # A newer push to the same branch cancels the older run
 concurrency:
@@ -29,6 +45,7 @@ jobs:
   api-tests:
     name: API tests
     needs: static-checks
+    if: ${{ inputs.suite != 'ui' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -48,7 +65,7 @@ jobs:
           done
           exit $missing
       - run: npm ci
-      - run: npm run test:api
+      - run: npm run test:api -- --retries=${RETRIES:-1}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -57,11 +74,11 @@ jobs:
           retention-days: 14
 
   # Runs after the API job, not beside it: both suites book the same event on the same account,
-  # and the seat-count checks would read each other's bookings. Still runs when the API tests fail.
+  # and the seat-count checks would read each other's bookings. Still runs when the API tests fail or are skipped.
   ui-tests:
     name: UI tests
     needs: [static-checks, api-tests]
-    if: ${{ !cancelled() && needs.static-checks.result == 'success' }}
+    if: ${{ !cancelled() && needs.static-checks.result == 'success' && inputs.suite != 'api' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -82,7 +99,7 @@ jobs:
           exit $missing
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:ui
+      - run: npm run test:ui -- --retries=${RETRIES:-1}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

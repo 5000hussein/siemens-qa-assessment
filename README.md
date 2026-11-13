@@ -55,6 +55,15 @@ The environment is public and shared, so every test cancels the bookings it crea
 2. **API tests**, after the static checks pass.
 3. **UI tests**, after the API job, even when the API tests fail. They don't run in parallel with the API job because both book the same event on the same account, and the seat-count checks would read each other's bookings.
 
+**Run workflow** (Actions tab → Tests → Run workflow) has two options:
+
+| Option    | Choices            | Default |
+| --------- | ------------------ | ------- |
+| `suite`   | `all`, `api`, `ui` | `all`   |
+| `retries` | `0`, `1`, `2`, `3` | `1`     |
+
+Push and pull-request runs always use the defaults.
+
 Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`). In CI the browser is headless, a failed test is retried once, and a forgotten `test.only` fails the run.
 
 **One-time setup:** in the repository on GitHub, open **Settings → Secrets and variables → Actions** and add `EVENTHUB_USER_EMAIL` and `EVENTHUB_USER_PASSWORD`.
