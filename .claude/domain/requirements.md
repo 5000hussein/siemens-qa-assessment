@@ -14,7 +14,7 @@ As a visitor to EventHub, I want to book tickets for an event, so that I can att
 - AC5 — Same works through the API using POST /api/bookings.
 
 ## Deliverables
-1. Story review (in `docs/story-review.md`, linked from the README): missing/unclear/wrong items, questions for PO, app vs story/docs mismatches.
+1. Story review (README section 2): missing/unclear/wrong items, questions for PO, app vs story/docs mismatches.
 2. UI + API automation. Architecture matters most; must scale for a team over years.
    Authorization handled by the framework, not by individual tests.
 3. Explain test count/coverage choices.

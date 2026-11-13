@@ -1,6 +1,6 @@
 # Known issues & story gaps (observed 2026-11-11)
 
-Before asserting on something that looks wrong, check here. Each item is also in `docs/story-review.md`.
+Before asserting on something that looks wrong, check here. Each item is also in the README story review (section 2).
 `[test]` = covered by a `test.fail()` in `src/tests/api/bookings/004-contract-vs-docs.spec.ts`.
 
 ## App / API vs documentation

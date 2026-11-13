@@ -6,7 +6,7 @@ import { patterns } from '../../../data/assertions.json';
 const eventName = readJsonValue(bookingsDataPath, `${currentEnv}.eventName`);
 const createBookingBody = readJsonObject(bookingsDataPath, `${currentEnv}.createBooking`);
 
-// Known mismatches between the API docs (Swagger) and the real responses, written up in docs/story-review.md.
+// Known mismatches between the API docs (Swagger) and the real responses, written up in the README story review.
 // test.fail() keeps them visible: the run stays green while the defect exists and goes red once it is fixed,
 // which is the signal to delete the annotation.
 test.describe('API contract vs documentation (known defects)', () => {
