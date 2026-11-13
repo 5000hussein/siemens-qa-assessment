@@ -38,9 +38,8 @@
 | D3 | **Cancel is a hard delete:** `DELETE /bookings/{id}` removes the record (a later `GET` returns 404), yet the schema has `status: cancelled` and the list has a `status=cancelled` filter that can never return anything. | API docs vs API | `003-cancel-booking.spec.ts` |
 | D4 | **"List all bookings"** returns only the signed-in user's bookings. The behaviour is right; the docs are wrong. | API docs | none |
 | D5 | **Past events are listed as "Upcoming" and can be booked:** events dated July and October 2026 appear under "Upcoming Events" and accept bookings in November 2026. | UI | manual check |
-| D6 | **The featured event's seat count doesn't change:** booking 2 tickets for the featured "Hollywood Monsoon Night" left `availableSeats` at 2287, while booking a non-featured event reduced its seats as documented. | API | manual check (tests choose events at runtime) |
-| D7 | **The phone rule differs:** the UI says "Enter a valid 10-digit phone"; the API only requires `minLength 10` on a free-text string. | UI vs API | `002-booking-validation.spec.ts` |
-| D8 | **No feedback after cancelling:** the card disappears without a message or toast. | UI | none |
+| D6 | **The phone rule differs:** the UI says "Enter a valid 10-digit phone"; the API only requires `minLength 10` on a free-text string. | UI vs API | `002-booking-validation.spec.ts` |
+| D7 | **No feedback after cancelling:** the card disappears without a message or toast. | UI | none |
 
 **Assumptions made to keep going:** a signed-in user counts as a "visitor"; the observed reference format is acceptable; "cancel" means the booking disappears from My Bookings and its seats are released; the 1–10 ticket limit is intended.
 

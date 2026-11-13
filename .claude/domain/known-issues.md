@@ -9,8 +9,7 @@ Before asserting on something that looks wrong, check here. Each item is also in
 3. **Cancel is a hard delete** — `DELETE /bookings/{id}` removes the booking (`GET` → 404) although the schema has `status: confirmed | cancelled` and `GET /bookings?status=cancelled` exists. No cancelled booking can ever be listed.
 4. **"List all bookings"** — docs say all bookings; actual list is scoped to the signed-in account (correct behaviour, wrong docs).
 5. **Past events are "Upcoming" and bookable** — sandbox events dated Jul/Oct 2026 are listed under "Upcoming Events" and accept bookings on 2026-11-11.
-6. **Featured event seats** — booking the featured "Hollywood Monsoon Night" did not reduce `availableSeats` (2287 before and after a 2-ticket booking), while "Dilli Diwali Mela" did (390 → 387). Seat tests therefore pick the first event with enough seats; the featured behaviour needs a PO answer.
-7. **Phone rule mismatch** — UI says "Enter a valid 10-digit phone", API only requires ≥ 10 characters (`+91 98765 43210` passes both).
+6. **Phone rule mismatch** — UI says "Enter a valid 10-digit phone", API only requires ≥ 10 characters (`+91 98765 43210` passes both).
 
 ## Story (US-114) gaps
 - "As a **visitor**" — booking requires a signed-in account.
