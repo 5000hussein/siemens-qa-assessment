@@ -7,7 +7,7 @@ import { buildBookingInput } from '../../../data/builders/bookingBuilder';
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
 const quantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.api.quantity`));
 
-// Known mismatches between the API docs (Swagger) and the real responses, written up in the README story review.
+// Known mismatches between the API docs (Swagger) and the real responses, written up in docs/story-review.md.
 // test.fail() keeps them visible: the run stays green while the defect exists and goes red once it is fixed,
 // which is the signal to delete the annotation.
 test.describe('API contract vs documentation (known defects)', () => {
