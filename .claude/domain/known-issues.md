@@ -4,12 +4,12 @@ Before asserting on something that looks wrong, check here. Each item is also in
 `[test]` = covered by a `test.fail()` in `src/tests/api/bookings/004-contract-vs-docs.spec.ts`.
 
 ## App / API vs documentation
-1. `[test]` **bookingRef format** — docs: `EVT-XXXXXX`; actual: first letter of the event title + `-` + 6 chars (`D-0VYXU6`, `H-H8L871`). Tests use `bookingRefPattern` (`/^[A-Z0-9]+-[A-Z0-9]{6}$/`).
-2. `[test]` **Number types** — `totalPrice` and event `price` are documented as numbers, returned as strings (`"900"`). Tests compare with `Number(...)`.
+1. `[test]` **bookingRef format** — docs: `EVT-XXXXXX`; actual: first letter of the event title + `-` + 6 chars (`D-0VYXU6`, `H-H8L871`). Tests use `patterns.bookingRef` in `src/data/assertions.json` (`^[A-Z0-9]+-[A-Z0-9]{6}$`).
+2. `[test]` **Number types** — `totalPrice` and event `price` are documented as numbers, returned as strings (`"900"`). Only `totalPrice` has a `test.fail`; the event `price` is not tested. Tests compare with `Number(...)`.
 3. **Cancel is a hard delete** — `DELETE /bookings/{id}` removes the booking (`GET` → 404) although the schema has `status: confirmed | cancelled` and `GET /bookings?status=cancelled` exists. No cancelled booking can ever be listed.
 4. **"List all bookings"** — docs say all bookings; actual list is scoped to the signed-in account (correct behaviour, wrong docs).
 5. **Past events are "Upcoming" and bookable** — sandbox events dated Jul/Oct 2026 are listed under "Upcoming Events" and accept bookings on 2026-11-11.
-6. **Phone rule mismatch** — UI says "Enter a valid 10-digit phone", API only requires ≥ 10 characters (`+91 98765 43210` passes both).
+6. **Phone rule mismatch** — UI says "Enter a valid 10-digit phone", API only requires ≥ 10 characters (`+91 9876543210`, the test data value, passes both).
 
 ## Story (US-114) gaps
 - "As a **visitor**" — booking requires a signed-in account.

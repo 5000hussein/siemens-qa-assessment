@@ -108,7 +108,7 @@ async createBooking(data: object): Promise<APIResponse> {
 The spec asserts on the response, the same way it calls page methods and asserts on the screen:
 
 ```ts
-const response = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
+const response = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
 expect(response.status()).toBe(201);
 const booking = (await response.json()).data;
 ```
@@ -126,7 +126,7 @@ The fixture's teardown runs after the test, pass or fail, and cancels every trac
 
 ### Test data and expected texts
 
-- Inputs live in `src/data/test_data/*.json`, keyed by environment (`PROD`). Each spec reads the values it needs at the top with `readJsonValue` and passes them straight to page or API methods; request bodies are written inline from those values.
+- Inputs live in `src/data/test_data/*.json`, keyed by environment (`PROD`). Each spec reads the values it needs at the top with `readJsonValue` (single values) or `readJsonObject` (whole objects such as request bodies) and passes them straight to page or API methods.
 - Expected texts (messages, dialog titles, statuses, patterns) live in `src/data/assertions.json` and are imported directly.
 - The event is chosen **by name** from `bookings.json` (`eventName`): each test calls `GET /events?search=<name>`, asserts 200, asserts the first result's title is that name (search is fuzzy, so a missing or different event fails here with a clear message) and uses that event's id and price. Ids differ per account, so ids are never stored.
 - Request bodies live in `bookings.json` (`createBooking`), read with `readJsonObject` and sent as `{ ...createBookingBody, eventId: event.id }`.

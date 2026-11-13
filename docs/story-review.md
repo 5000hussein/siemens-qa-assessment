@@ -38,7 +38,7 @@
 | D3 | **Cancel is a hard delete:** `DELETE /bookings/{id}` removes the record (a later `GET` returns 404), yet the schema has `status: cancelled` and the list has a `status=cancelled` filter that can never return anything. | API docs vs API | `003-cancel-booking.spec.ts` |
 | D4 | **"List all bookings"** returns only the signed-in user's bookings. The behaviour is right; the docs are wrong. | API docs | none |
 | D5 | **Past events are listed as "Upcoming" and can be booked:** events dated July and October 2026 appear under "Upcoming Events" and accept bookings in November 2026. | UI | manual check |
-| D6 | **The phone rule differs:** the UI says "Enter a valid 10-digit phone"; the API only requires `minLength 10` on a free-text string. | UI vs API | `002-booking-validation.spec.ts` |
+| D6 | **The phone rule differs:** the UI says "Enter a valid 10-digit phone"; the API only requires `minLength 10` on a free-text string. | UI vs API | manual check (the API test's invalid phone `123` breaks both rules, so it doesn't show the difference) |
 | D7 | **No feedback after cancelling:** the card disappears without a message or toast. | UI | none |
 
 **Assumptions made to keep going:** a signed-in user counts as a "visitor"; the observed reference format is acceptable; "cancel" means the booking disappears from My Bookings and its seats are released; the 1–10 ticket limit is intended.
@@ -51,7 +51,7 @@
 |---|---|---|
 | AC1 booking, confirmation, reference | Full flow from the events list, reference format checked | 201 response shape and reference format |
 | AC1 negative | Invalid name, email and phone show messages and create no booking | 400 for quantity 0 and 11, short name, bad email, short phone, empty body; 404 unknown event; 401 no token |
-| AC2 price × quantity | Summary at 1, 3 and 10 tickets, plus the confirmation total | `totalPrice` for 2 and 10 tickets |
+| AC2 price × quantity | Summary at 1, 3 and 10 tickets, plus the confirmation total | `totalPrice` for 3 and 10 tickets |
 | AC3 in My Bookings | The card shows ref, event, quantity, total and status; View Details shows ref, status, event, customer and payment summary | Read back by id, by reference and from the list |
 | AC4 cancel | Cancel through the dialog; gone after a reload; backend returns 404; seats restored | 200 then 404; seats restored; cancel twice returns 404; unknown id returns 404; no token returns 401 and the booking survives |
 | AC5 via API | n/a | All of the above, plus available seats drop by the booked quantity |

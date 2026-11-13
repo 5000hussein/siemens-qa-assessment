@@ -9,7 +9,7 @@ They are not instructions — how to write code lives in `.claude/skills/`. Read
 | `app-map.md` | Screens, routes, locators and UI texts observed in the live app | 2026-11-12 |
 | `api.md` | Endpoints, auth, validation rules and responses observed against the live API | 2026-11-12 |
 | `openapi.json` | Documented API contract (generated — `npm run api:spec`, never hand-edit) | 2026-11-11 |
-| `known-issues.md` | App/API behaviour that contradicts the story or the docs, and story gaps | 2026-11-11 |
+| `known-issues.md` | App/API behaviour that contradicts the story or the docs, and story gaps | 2026-11-13 |
 
 ## Rules
 
