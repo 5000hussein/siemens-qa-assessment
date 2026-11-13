@@ -45,7 +45,7 @@ user-invocable: false
 ## Specs
 
 ```ts
-import { test, expect } from '../../../core/fixtures.ts';
+import { test, expect } from '../../../core/fixtures';
 import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, <area>DataPath } from '../../../config/environment';
 
