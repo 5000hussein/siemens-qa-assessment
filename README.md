@@ -195,6 +195,10 @@ Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`)
 
 7. **One account per worker** (registered in global setup), then parallel runs. Firefox and WebKit projects, and publishing results to the team's test-management tool.
 
+**Secrets**
+
+8. **Encrypted credentials in the repo** with a library such as [dotenvx](https://dotenvx.com). The `.env` file is committed **encrypted**, and each machine decrypts it at run time with a private key it keeps locally (CI keeps it as one repository secret). Credentials then stay versioned with the code, a new teammate needs only the key instead of every value, and nothing readable sits in the repository.
+
 ---
 
 ## 6. Framework guide
