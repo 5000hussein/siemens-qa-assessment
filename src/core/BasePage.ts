@@ -20,10 +20,4 @@ export abstract class BasePage {
     await locator.waitFor({ state: 'visible' });
     await locator.fill(value);
   }
-
-  protected async getText(locator: Locator): Promise<string> {
-    await locator.waitFor({ state: 'visible' });
-    const text = await locator.textContent();
-    return text?.trim() ?? '';
-  }
 }
