@@ -13,6 +13,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
   test('AC1 + AC2: Check the user is able to book tickets and see a confirmation with a booking reference and total = price × tickets', async ({
     eventsApi,
     bookingsApi,
+    bookingCleanup,
     eventsPage,
     eventDetailsPage,
   }) => {
@@ -38,22 +39,21 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     );
     await eventDetailsPage.clickConfirmBooking();
 
-    // Confirmation with booking reference (AC1) and the same total (AC2)
+    // Look the booking up by its reference so the teardown cancels it even if a check below fails
     const bookingRef = await eventDetailsPage.getBookingReference();
+    const bookingResponse = await bookingsApi.getBookingByRef(bookingRef);
+    expect(bookingResponse.status()).toBe(200);
+    const savedBooking = (await bookingResponse.json()).data;
+    bookingCleanup.track(savedBooking.id);
+
+    // Confirmation with booking reference (AC1) and the same total (AC2)
     expect(bookingRef).toMatch(new RegExp(patterns.bookingRef));
     await eventDetailsPage.verifyConfirmation(createBookingBody.customerName, createBookingBody.quantity, event.price);
 
     // The backend holds the same booking
-    const bookingResponse = await bookingsApi.getBookingByRef(bookingRef);
-    expect(bookingResponse.status()).toBe(200);
-    const savedBooking = (await bookingResponse.json()).data;
     expect(savedBooking.eventId).toBe(event.id);
     expect(savedBooking.quantity).toBe(createBookingBody.quantity);
     expect(Number(savedBooking.totalPrice)).toBe(Number(event.price) * createBookingBody.quantity);
-
-    // Cancel the booking
-    const cancelResponse = await bookingsApi.cancelBooking(savedBooking.id);
-    expect(cancelResponse.status()).toBe(200);
   });
 
   test('AC2: Check the user is able to see the total update for the minimum and maximum ticket count', async ({

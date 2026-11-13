@@ -43,7 +43,7 @@ npm test                      # setup + UI + API: 25 tests, about 45 s
 
 ```
 src/
-  core/      BasePage.ts (parent of all pages) · fixtures.ts (every fixture: auth, pages, API clients, cleanup)
+  core/      BasePage.ts (parent of all pages) · fixtures.ts (every fixture: auth, pages, API clients, booking cleanup)
   pages/     CommonPage → EventsPage, EventDetailsPage, MyBookingsPage, BookingDetailsPage · LoginPage
   api/       BaseApi → AuthApi, EventsApi, BookingsApi
   config/    environment.ts (env, paths, credentials) · routes.ts
@@ -115,7 +115,14 @@ const booking = (await response.json()).data;
 
 ### Cleanup
 
-The environment is shared and public, so every test that creates a booking cancels it at the end with `bookingsApi.cancelBooking(id)` and asserts the 200. A booking made through the UI is looked up by its reference first (`getBookingByRef`). Tests whose assertions are expected to fail (`test.fail`) cancel in `test.afterEach`, so the cleanup still runs.
+The environment is shared and public, so nothing a test creates may be left behind, even when the test fails. Tests that create a booking request the `bookingCleanup` fixture and register the id as soon as it exists:
+
+```ts
+const booking = (await createResponse.json()).data;
+bookingCleanup.track(booking.id);
+```
+
+The fixture's teardown runs after the test, pass or fail, and cancels every tracked booking (a 404 means the test already cancelled it itself). A booking made through the UI is looked up by its reference (`getBookingByRef`) right after the confirmation and tracked the same way. Tests that create nothing don't request the fixture.
 
 ### Test data and expected texts
 

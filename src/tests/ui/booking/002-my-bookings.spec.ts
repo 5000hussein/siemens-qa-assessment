@@ -10,6 +10,7 @@ test.describe('US-114 My Bookings (UI)', () => {
   test('AC3: Check the user is able to see a booking made in the UI in My Bookings', async ({
     eventsApi,
     bookingsApi,
+    bookingCleanup,
     eventDetailsPage,
     myBookingsPage,
   }) => {
@@ -28,20 +29,20 @@ test.describe('US-114 My Bookings (UI)', () => {
     );
     const bookingRef = await eventDetailsPage.getBookingReference();
 
+    // Look the booking up by its reference so the teardown cancels it even if a check below fails
+    const bookingResponse = await bookingsApi.getBookingByRef(bookingRef);
+    expect(bookingResponse.status()).toBe(200);
+    bookingCleanup.track((await bookingResponse.json()).data.id);
+
     // The booking is listed in My Bookings
     await eventDetailsPage.clickViewMyBookings();
     await myBookingsPage.verifyBookingListed(bookingRef, eventName, createBookingBody.quantity, event.price, bookingStatuses.confirmed);
-
-    // Cancel the booking
-    const bookingResponse = await bookingsApi.getBookingByRef(bookingRef);
-    expect(bookingResponse.status()).toBe(200);
-    const cancelResponse = await bookingsApi.cancelBooking((await bookingResponse.json()).data.id);
-    expect(cancelResponse.status()).toBe(200);
   });
 
   test('AC4: Check the user is able to cancel a booking from My Bookings and its seats are released', async ({
     eventsApi,
     bookingsApi,
+    bookingCleanup,
     myBookingsPage,
   }) => {
     // Get the event by name
@@ -53,6 +54,7 @@ test.describe('US-114 My Bookings (UI)', () => {
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
     expect(createResponse.status()).toBe(201);
     const booking = (await createResponse.json()).data;
+    bookingCleanup.track(booking.id);
 
     // Cancel it from My Bookings
     await myBookingsPage.navigate();
@@ -77,6 +79,7 @@ test.describe('US-114 My Bookings (UI)', () => {
   test('AC3: Check the user is able to view the booking details: reference, status, event, customer and payment summary', async ({
     eventsApi,
     bookingsApi,
+    bookingCleanup,
     myBookingsPage,
     bookingDetailsPage,
   }) => {
@@ -89,6 +92,7 @@ test.describe('US-114 My Bookings (UI)', () => {
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
     expect(createResponse.status()).toBe(201);
     const booking = (await createResponse.json()).data;
+    bookingCleanup.track(booking.id);
 
     // Open its details from My Bookings
     await myBookingsPage.navigate();
@@ -110,9 +114,5 @@ test.describe('US-114 My Bookings (UI)', () => {
       createBookingBody.customerPhone
     );
     await bookingDetailsPage.verifyPaymentSummary(createBookingBody.quantity, event.price);
-
-    // Cancel the booking
-    const cancelResponse = await bookingsApi.cancelBooking(booking.id);
-    expect(cancelResponse.status()).toBe(200);
   });
 });

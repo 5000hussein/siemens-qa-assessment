@@ -11,6 +11,7 @@ test.describe('AC4: DELETE /api/bookings/{id} cancels a booking', () => {
   test('Check the user is able to cancel a booking, the booking is removed and the seats are restored', async ({
     eventsApi,
     bookingsApi,
+    bookingCleanup,
   }) => {
     // Get the event by name
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
@@ -21,6 +22,7 @@ test.describe('AC4: DELETE /api/bookings/{id} cancels a booking', () => {
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
     expect(createResponse.status()).toBe(201);
     const booking = (await createResponse.json()).data;
+    bookingCleanup.track(booking.id);
 
     // Cancel the booking
     const cancelResponse = await bookingsApi.cancelBooking(booking.id);
@@ -34,7 +36,7 @@ test.describe('AC4: DELETE /api/bookings/{id} cancels a booking', () => {
     expect((await eventResponse.json()).data.availableSeats).toBe(event.availableSeats);
   });
 
-  test('Check the user is not able to cancel the same booking twice (404)', async ({ eventsApi, bookingsApi }) => {
+  test('Check the user is not able to cancel the same booking twice (404)', async ({ eventsApi, bookingsApi, bookingCleanup }) => {
     // Get the event by name
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
     expect(eventsResponse.status()).toBe(200);
@@ -44,6 +46,7 @@ test.describe('AC4: DELETE /api/bookings/{id} cancels a booking', () => {
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
     expect(createResponse.status()).toBe(201);
     const booking = (await createResponse.json()).data;
+    bookingCleanup.track(booking.id);
 
     // Cancel it twice: the second call finds nothing
     expect((await bookingsApi.cancelBooking(booking.id)).status()).toBe(200);
@@ -59,6 +62,7 @@ test.describe('AC4: DELETE /api/bookings/{id} cancels a booking', () => {
     eventsApi,
     bookingsApi,
     anonymousBookingsApi,
+    bookingCleanup,
   }) => {
     // Get the event by name
     const eventsResponse = await eventsApi.getEvents({ search: eventName });
@@ -69,13 +73,10 @@ test.describe('AC4: DELETE /api/bookings/{id} cancels a booking', () => {
     const createResponse = await bookingsApi.createBooking({ ...createBookingBody, eventId: event.id });
     expect(createResponse.status()).toBe(201);
     const booking = (await createResponse.json()).data;
+    bookingCleanup.track(booking.id);
 
     // Cancel without a token: rejected, and the booking is still there
     expect((await anonymousBookingsApi.cancelBooking(booking.id)).status()).toBe(401);
     expect((await bookingsApi.getBooking(booking.id)).status()).toBe(200);
-
-    // Cancel the booking
-    const cancelResponse = await bookingsApi.cancelBooking(booking.id);
-    expect(cancelResponse.status()).toBe(200);
   });
 });

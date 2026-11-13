@@ -22,6 +22,11 @@ type Fixtures = {
   eventsApi: EventsApi;
   bookingsApi: BookingsApi;
   anonymousBookingsApi: BookingsApi;
+  bookingCleanup: BookingCleanup;
+};
+
+type BookingCleanup = {
+  track: (bookingId: number) => void;
 };
 
 type WorkerFixtures = {
@@ -59,6 +64,18 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
     const ctx = await request.newContext({ baseURL: apiBaseUrl });
     await use(new BookingsApi(ctx));
     await ctx.dispose();
+  },
+
+  // ========== CLEANUP ==========
+  // Opt-in for tests that create bookings: track each id as soon as it exists and the teardown cancels it,
+  // even when the test failed. 404 means the test already cancelled it itself.
+  bookingCleanup: async ({ bookingsApi }, use) => {
+    const bookingIds: number[] = [];
+    await use({ track: (bookingId) => bookingIds.push(bookingId) });
+    for (const bookingId of bookingIds) {
+      const response = await bookingsApi.cancelBooking(bookingId);
+      expect([200, 404]).toContain(response.status());
+    }
   },
 
   // ========== PAGES ==========
