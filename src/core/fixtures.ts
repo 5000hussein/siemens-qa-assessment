@@ -9,7 +9,7 @@ import { BookingDetailsPage } from '../pages/BookingDetailsPage';
 import { AuthApi } from '../api/AuthApi';
 import { EventsApi } from '../api/EventsApi';
 import { BookingsApi } from '../api/BookingsApi';
-import { apiBaseUrl, getUserCredentials } from '../config/environment';
+import { apiBaseUrl, userEmail, userPassword } from '../config/environment';
 
 type Fixtures = {
   commonPage: CommonPage;
@@ -32,10 +32,9 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
   // ========== AUTH (framework-owned: tests never log in themselves) ==========
   apiToken: [
     async ({}, use) => {
-      const { email, password } = getUserCredentials();
       const ctx = await request.newContext({ baseURL: apiBaseUrl });
-      const response = await new AuthApi(ctx).login(email, password);
-      expect(response.status(), `Login failed for ${email}`).toBe(200);
+      const response = await new AuthApi(ctx).login(userEmail, userPassword);
+      expect(response.status()).toBe(200);
       const token = (await response.json()).token;
       await ctx.dispose();
       await use(token);

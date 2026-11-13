@@ -11,11 +11,6 @@ export const authStatePath = './.auth/user.json';
 export const baseUrl = readJsonValue(environmentsJsonPath, `${currentEnv}.baseUrl`);
 export const apiBaseUrl = readJsonValue(environmentsJsonPath, `${currentEnv}.apiBaseUrl`);
 
-export function getUserCredentials(): { email: string; password: string } {
-  const email = process.env.EVENTHUB_USER_EMAIL;
-  const password = process.env.EVENTHUB_USER_PASSWORD;
-  if (!email || !password) {
-    throw new Error('EVENTHUB_USER_EMAIL and EVENTHUB_USER_PASSWORD must be set in .env (see .env.example)');
-  }
-  return { email, password };
-}
+// From .env (gitignored), never from JSON: the repo is public
+export const userEmail = process.env.EVENTHUB_USER_EMAIL ?? '';
+export const userPassword = process.env.EVENTHUB_USER_PASSWORD ?? '';
