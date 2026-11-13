@@ -15,7 +15,7 @@ Full conventions live in the **`framework-conventions`** and **`locator-rules`**
 - **Selector priority:** role → test id → label/text → `#id` → XPath. Every locator matches exactly one element.
 - **No static waits.** No `waitForTimeout`; `waitFor` before interacting; web-first `expect`.
 - **Never weaken an assertion.** App vs requirement/doc mismatch → `test.fail(true, reason)` + an entry in `.claude/domain/known-issues.md` and the README story review.
-- **Never read secrets.** `.env` and `.auth/` are gitignored and denied in `settings.json`; never open, print or commit them.
+- **Never read secrets.** `.env` (committed with a throwaway test account, as the submission asks) and `.auth/` (gitignored) are denied in `settings.json`; never open or print them.
 - **Green before done:** `npm run typecheck && npm run lint && npm run format:check` and the affected tests pass.
 - **One action, one commit.** Fix what was asked; don't refactor "while you're here."
 

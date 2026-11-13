@@ -3,9 +3,14 @@ name: EventHub QA - UI & API Tests
 on:
   push:
   pull_request:
-  # "Run workflow" button in the Actions tab. Push and PR runs use the defaults: all suites, 1 retry.
+  # "Run workflow" button in the Actions tab. Push and PR runs use the defaults: PROD, all suites, 1 retry.
   workflow_dispatch:
     inputs:
+      environment:
+        description: Environment to test (a block in src/data/environments.json and the test data files)
+        type: choice
+        options: [PROD]
+        default: PROD
       suite:
         description: Which tests to run
         type: choice
@@ -18,6 +23,8 @@ on:
         default: '1'
 
 env:
+  # Read by src/config/environment.ts; push and PR runs have no inputs, so PROD
+  ENV: ${{ inputs.environment || 'PROD' }}
   # Empty on push and PR runs, so the shell falls back to 1 (the same as the config's CI value)
   RETRIES: ${{ inputs.retries }}
 

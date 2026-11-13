@@ -41,12 +41,11 @@
 ## 🚀 1. How to run
 
 > [!IMPORTANT]
-> **Prerequisites:** Node.js 20+ and an EventHub account. The credentials for this submission are in the submission form, never in the repository.
+> **Prerequisites:** Node.js 20+. As the submission brief asks, the repository includes a `.env` with a dedicated, throwaway EventHub test account, so the tests run straight after cloning.
 
 ```bash
 npm ci
 npx playwright install chromium
-cp .env.example .env          # set EVENTHUB_USER_EMAIL and EVENTHUB_USER_PASSWORD
 npm test                      # setup + UI + API: 25 tests, about 45 s
 ```
 
@@ -86,10 +85,11 @@ flowchart LR
 
 **Run workflow** (Actions tab → EventHub QA - UI & API Tests → Run workflow) has two options. Push and pull-request runs always use the defaults.
 
-| Option    | Choices            | Default |
-| --------- | ------------------ | ------- |
-| `suite`   | `all`, `api`, `ui` | `all`   |
-| `retries` | `0`, `1`, `2`, `3` | `1`     |
+| Option        | Choices            | Default |
+| ------------- | ------------------ | ------- |
+| `environment` | `PROD`             | `PROD`  |
+| `suite`       | `all`, `api`, `ui` | `all`   |
+| `retries`     | `0`, `1`, `2`, `3` | `1`     |
 
 > [!NOTE]
 > **One-time setup:** in the repository on GitHub, open **Settings → Secrets and variables → Actions** and add `EVENTHUB_USER_EMAIL` and `EVENTHUB_USER_PASSWORD`. If one is missing, the job stops straight away and names it.
@@ -214,7 +214,7 @@ flowchart TB
 | UI results cross-checked against the API                                                         | What the user sees matches what was stored                                                                                            |
 | Known defects as `test.fail`                                                                     | Visible in every run without a red build; turns red the day the defect is fixed                                                       |
 | One worker                                                                                       | Seat-count checks share one account and would race in parallel                                                                        |
-| Built on the team's existing framework conventions (BasePage, JSON data, `TIMEOUTS`, lint rules) | Familiar to the team. Differences: framework-owned auth, `.env` credentials (public repo), independent tests                          |
+| Built on the team's existing framework conventions (BasePage, JSON data, `TIMEOUTS`, lint rules) | Familiar to the team. Differences: framework-owned auth, credentials in `.env` instead of JSON, independent tests                     |
 | A Claude Code package (`.claude/`) next to the framework                                         | New tests can be generated from a requirement and verified against the live app, following the same rules a person does (section 6.5) |
 
 ---
@@ -251,7 +251,7 @@ flowchart TB
 
 ### 🔐 Secrets
 
-8. **Encrypted credentials in the repo** with a library such as [dotenvx](https://dotenvx.com). The `.env` file is committed **encrypted**, and each machine decrypts it at run time with a private key it keeps locally (CI keeps it as one repository secret). Credentials then stay versioned with the code, a new teammate needs only the key instead of every value, and nothing readable sits in the repository.
+8. **Encrypted credentials in the repo** with a library such as [dotenvx](https://dotenvx.com). Today `.env` is committed in plain text because the submission asks for it. With dotenvx it would be committed **encrypted**, and each machine decrypts it at run time with a private key it keeps locally (CI keeps it as one repository secret). Credentials then stay versioned with the code, a new teammate needs only the key instead of every value, and nothing readable sits in the repository.
 
 ---
 
@@ -403,7 +403,7 @@ When the app contradicts its documentation, the documented behaviour is still as
 5. **Locator priority:** role and name → test id → label or text → `#id` → XPath. Each locator matches exactly one element, scoped to a parent when text repeats.
 6. **No static waits** (`waitForTimeout` fails lint).
 7. **Never weaken an assertion** to make a run pass. A real mismatch becomes `test.fail` plus a row in the story review (section 2).
-8. **Never commit secrets.** `.env` and `.auth/` are git-ignored.
+8. **No secrets in code.** Credentials live only in `.env` (committed here with a throwaway test account, as the submission asks). `.auth/` (the saved session) is git-ignored.
 9. **Green before commit:** typecheck, lint, format check, and the affected tests pass.
 
 <details>
@@ -491,7 +491,7 @@ Used only for checking (`npm run typecheck`). Playwright runs TypeScript directl
 | `.prettierrc.json`                                   | Formatting: single quotes, 140-character lines                                                                     |
 | `package.json`                                       | Scripts (section 1) and dev dependencies; Node 20+                                                                 |
 | `.env.example`                                       | Template for `.env`: only the two credentials                                                                      |
-| `.gitignore`                                         | Keeps secrets (`.env`, `.auth/`) and generated output out of git                                                   |
+| `.gitignore`                                         | Keeps the saved session (`.auth/`) and generated output out of git                                                 |
 | `.mcp.json`                                          | AI tooling only (section 6.5); the test suite doesn't use it                                                       |
 | `.github/workflows/EventHub QA - UI & API Tests.yml` | CI: static checks → API tests → UI tests, reports as artifacts (section 1)                                         |
 
