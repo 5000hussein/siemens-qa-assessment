@@ -34,7 +34,9 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
     async ({}, use) => {
       const { email, password } = getUserCredentials();
       const ctx = await request.newContext({ baseURL: apiBaseUrl });
-      const token = await new AuthApi(ctx).getToken(email, password);
+      const response = await new AuthApi(ctx).login(email, password);
+      expect(response.status(), `Login failed for ${email}`).toBe(200);
+      const token = (await response.json()).token;
       await ctx.dispose();
       await use(token);
     },
@@ -51,9 +53,7 @@ export const test = base.extend<Fixtures, WorkerFixtures>({
     await use(new EventsApi(apiRequest));
   },
   bookingsApi: async ({ apiRequest }, use) => {
-    const bookingsApi = new BookingsApi(apiRequest);
-    await use(bookingsApi);
-    await bookingsApi.cleanup();
+    await use(new BookingsApi(apiRequest));
   },
   // No token: only for "request without a token returns 401" tests
   anonymousBookingsApi: async ({}, use) => {

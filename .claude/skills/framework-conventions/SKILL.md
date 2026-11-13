@@ -30,10 +30,9 @@ user-invocable: false
 
 ## API clients
 
-- Raw method (`create`, `get`, …) returns `APIResponse` so specs can assert status and body.
-- Convenience method (`createX`, `getX`) throws on non-2xx and returns typed data — for setup steps.
+- One class per topic, like the pages. Each method calls **one endpoint and returns the `APIResponse`**: no checks, no unwrapping, no tracking inside the client.
+- Specs assert on the response: status first, then `(await response.json())` body.
 - Relative paths (no leading `/`). Never set auth headers in a client.
-- Every record the client creates is tracked and removed in `cleanup()`, called from fixture teardown.
 
 ## Auth and data ownership
 

@@ -10,25 +10,3 @@ export type EventItem = {
   totalSeats: number;
   availableSeats: number;
 };
-
-export type Booking = {
-  id: number;
-  eventId: number;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  quantity: number;
-  // Documented as number, returned as string ("900")
-  totalPrice: number | string;
-  status: 'confirmed' | 'cancelled';
-  bookingRef: string;
-  event?: EventItem;
-};
-
-export type CreateBookingInput = {
-  eventId: number;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  quantity: number;
-};

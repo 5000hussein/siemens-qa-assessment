@@ -2,6 +2,7 @@ import { test, expect } from '../../../core/fixtures';
 import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { validationMessages } from '../../../data/assertions.json';
+import type { EventItem } from '../../../api/types';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
 const customerName = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerName`);
@@ -12,11 +13,18 @@ const belowMinQuantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.q
 const aboveMaxQuantity = Number(readJsonValue(bookingsDataPath, `${currentEnv}.quantityLimits.aboveMax`));
 const notFoundEventId = Number(readJsonValue(bookingsDataPath, `${currentEnv}.notFound.eventId`));
 
+let event: EventItem;
+
 test.describe('AC5 negative: POST /api/bookings rejects invalid requests', () => {
+  test.beforeEach(async ({ eventsApi }) => {
+    const eventsResponse = await eventsApi.getEvents({ limit: 100 });
+    expect(eventsResponse.status()).toBe(200);
+    event = (await eventsResponse.json()).data.find((e: EventItem) => e.availableSeats >= minSeats);
+  });
+
   for (const invalidQuantity of [belowMinQuantity, aboveMaxQuantity]) {
-    test(`quantity ${invalidQuantity} returns 400 with the quantity rule`, async ({ eventsApi, bookingsApi }) => {
-      const event = await eventsApi.findBookableEvent(minSeats);
-      const response = await bookingsApi.create({
+    test(`quantity ${invalidQuantity} returns 400 with the quantity rule`, async ({ bookingsApi }) => {
+      const response = await bookingsApi.createBooking({
         eventId: event.id,
         customerName,
         customerEmail,
@@ -32,11 +40,10 @@ test.describe('AC5 negative: POST /api/bookings rejects invalid requests', () =>
   }
 
   for (const field of ['customerName', 'customerEmail', 'customerPhone']) {
-    test(`invalid ${field} returns 400 naming the field`, async ({ eventsApi, bookingsApi }) => {
-      const event = await eventsApi.findBookableEvent(minSeats);
+    test(`invalid ${field} returns 400 naming the field`, async ({ bookingsApi }) => {
       const invalidValue = readJsonValue(bookingsDataPath, `${currentEnv}.invalidBooking.${field}`);
 
-      const response = await bookingsApi.create({
+      const response = await bookingsApi.createBooking({
         eventId: event.id,
         customerName,
         customerEmail,
@@ -52,19 +59,21 @@ test.describe('AC5 negative: POST /api/bookings rejects invalid requests', () =>
   }
 
   test('missing body fields return 400', async ({ bookingsApi }) => {
-    const response = await bookingsApi.create({});
+    const response = await bookingsApi.createBooking({});
+
     expect(response.status()).toBe(400);
     expect((await response.json()).error).toBe(validationMessages.api.validationFailed);
   });
 
   test('unknown event returns 404', async ({ bookingsApi }) => {
-    const response = await bookingsApi.create({ eventId: notFoundEventId, customerName, customerEmail, customerPhone, quantity });
+    const response = await bookingsApi.createBooking({ eventId: notFoundEventId, customerName, customerEmail, customerPhone, quantity });
+
     expect(response.status()).toBe(404);
   });
 
-  test('request without a token returns 401', async ({ anonymousBookingsApi, eventsApi }) => {
-    const event = await eventsApi.findBookableEvent(minSeats);
-    const response = await anonymousBookingsApi.create({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
+  test('request without a token returns 401', async ({ anonymousBookingsApi }) => {
+    const response = await anonymousBookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
+
     expect(response.status()).toBe(401);
     expect((await response.json()).error).toBe(validationMessages.api.unauthorized);
   });

@@ -2,6 +2,7 @@ import { test, expect } from '../../../core/fixtures';
 import { readJsonValue } from '../../../utils/jsonHelper';
 import { currentEnv, bookingsDataPath } from '../../../config/environment';
 import { patterns, validationMessages } from '../../../data/assertions.json';
+import type { EventItem } from '../../../api/types';
 
 const minSeats = Number(readJsonValue(bookingsDataPath, `${currentEnv}.minAvailableSeats`));
 const customerName = readJsonValue(bookingsDataPath, `${currentEnv}.booking.customerName`);
@@ -14,15 +15,20 @@ const invalidName = readJsonValue(bookingsDataPath, `${currentEnv}.invalidBookin
 const invalidEmail = readJsonValue(bookingsDataPath, `${currentEnv}.invalidBooking.customerEmail`);
 const invalidPhone = readJsonValue(bookingsDataPath, `${currentEnv}.invalidBooking.customerPhone`);
 
+let event: EventItem;
+
 test.describe('US-114 Book tickets for an event (UI)', () => {
+  test.beforeEach(async ({ eventsApi }) => {
+    const eventsResponse = await eventsApi.getEvents({ limit: 100 });
+    expect(eventsResponse.status()).toBe(200);
+    event = (await eventsResponse.json()).data.find((e: EventItem) => e.availableSeats >= minSeats);
+  });
+
   test('AC1 + AC2: booking shows a confirmation with a reference and total = price × tickets', async ({
-    eventsApi,
     bookingsApi,
     eventsPage,
     eventDetailsPage,
   }) => {
-    const event = await eventsApi.findBookableEvent(minSeats);
-
     // Step 1: Open the event from the events list
     await eventsPage.navigate();
     await eventsPage.openEvent(event.title);
@@ -41,15 +47,19 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     expect(bookingRef).toMatch(new RegExp(patterns.bookingRef));
     await eventDetailsPage.verifyConfirmation(customerName, quantity, event.price);
 
-    // Step 5: The backend holds the same booking (also registers it for teardown cleanup)
-    const booking = await bookingsApi.trackByRef(bookingRef);
+    // Step 5: The backend holds the same booking
+    const bookingResponse = await bookingsApi.getBookingByRef(bookingRef);
+    expect(bookingResponse.status()).toBe(200);
+    const booking = (await bookingResponse.json()).data;
     expect(booking.eventId).toBe(event.id);
     expect(booking.quantity).toBe(quantity);
     expect(Number(booking.totalPrice)).toBe(Number(event.price) * quantity);
+
+    // Clean up
+    expect((await bookingsApi.cancelBooking(booking.id)).status()).toBe(200);
   });
 
-  test('AC2: total updates for the minimum and maximum ticket count', async ({ eventsApi, eventDetailsPage }) => {
-    const event = await eventsApi.findBookableEvent(minSeats);
+  test('AC2: total updates for the minimum and maximum ticket count', async ({ eventDetailsPage }) => {
     await eventDetailsPage.navigate(event.id);
 
     await eventDetailsPage.verifyPriceSummary(event.price, minQuantity);
@@ -60,8 +70,7 @@ test.describe('US-114 Book tickets for an event (UI)', () => {
     await expect(eventDetailsPage.incrementTicketsButton).toBeDisabled();
   });
 
-  test('AC1 negative: invalid customer details are rejected and no booking is created', async ({ eventsApi, eventDetailsPage }) => {
-    const event = await eventsApi.findBookableEvent(minSeats);
+  test('AC1 negative: invalid customer details are rejected and no booking is created', async ({ eventDetailsPage }) => {
     await eventDetailsPage.navigate(event.id);
 
     await eventDetailsPage.fillCustomerDetails(invalidName, invalidEmail, invalidPhone);

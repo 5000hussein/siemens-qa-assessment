@@ -41,7 +41,7 @@ From the command: `layer`, `coverage`, `target`, the numbered steps, the explore
 ## Rules
 
 - Never log in inside a test, never set auth headers in specs, never pin ids — the framework handles auth and data selection.
-- Every record a test creates is cleaned up by the framework (tracked client calls); register UI-created records.
+- Every record a test creates is cancelled at the end of that test (`test.afterEach` when the test is expected to fail).
 - No helper functions or computed values in specs; no literals that belong in JSON.
 - No `waitForTimeout`, no raw timeout numbers.
 - Never weaken an assertion to match the app. Mismatches are `test.fail` + a warning.

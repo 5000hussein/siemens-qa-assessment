@@ -78,10 +78,10 @@ test('AC4: a booking can be cancelled', async ({ eventsApi, bookingsApi, myBooki
 Each fixture is a small recipe in `src/core/fixtures.ts`:
 
 ```ts
-bookingsApi: async ({ apiRequest }, use) => {
-  const bookingsApi = new BookingsApi(apiRequest); // setup: before the test
-  await use(bookingsApi);                          // the test runs here
-  await bookingsApi.cleanup();                     // teardown: after the test, even if it failed
+apiRequest: async ({ apiToken }, use) => {
+  const ctx = await request.newContext({ baseURL: apiBaseUrl, extraHTTPHeaders: { Authorization: `Bearer ${apiToken}` } }); // setup
+  await use(ctx);       // the test runs here
+  await ctx.dispose();  // teardown: after the test, even if it failed
 },
 ```
 
@@ -89,25 +89,39 @@ bookingsApi: async ({ apiRequest }, use) => {
 |---|---|---|
 | Created | before **each** test | **once** per worker |
 | Shared between tests | no | yes |
-| Used for | pages, API clients, cleanup: anything that must start clean | `apiToken`: expensive to get, read-only, safe to share |
+| Used for | pages, API clients, the HTTP client: anything that must start clean | `apiToken`: expensive to get, read-only, safe to share |
 
 ### Page objects
 
 `BasePage` holds the browser tab and small helpers (`navigateTo`, `click`, `typeText`). `CommonPage` adds the header shared by every signed-in screen. Each screen has one class that holds its **locators** (how to find elements) and **actions and checks** (`openEvent`, `cancelBooking`, `verifyPaymentSummary`). Specs never use raw locators; they call page methods.
 
-### API clients and cleanup
+### API clients
 
-`BookingsApi`, `EventsApi` and `AuthApi` wrap the endpoints. Each has two kinds of method:
-- **raw methods** (`create`, `get`, `cancel`) return the HTTP response, so tests can check status and body
-- **convenience methods** (`createBooking`, `getEvent`) throw on errors and return typed data, for setup steps
+One class per topic, like the pages: `AuthApi`, `EventsApi`, `BookingsApi`. Each method calls **one endpoint and returns the response**, nothing else:
 
-`BookingsApi` records every booking it creates, and its fixture cancels them after the test. Bookings made through the UI are registered with `trackByRef(ref)`.
+```ts
+async createBooking(data: object): Promise<APIResponse> {
+  return this.request.post('bookings', { data });
+}
+```
+
+The spec asserts on the response, the same way it calls page methods and asserts on the screen:
+
+```ts
+const response = await bookingsApi.createBooking({ eventId: event.id, customerName, customerEmail, customerPhone, quantity });
+expect(response.status()).toBe(201);
+const booking = (await response.json()).data;
+```
+
+### Cleanup
+
+The environment is shared and public, so every test that creates a booking cancels it at the end with `bookingsApi.cancelBooking(id)` and asserts the 200. A booking made through the UI is looked up by its reference first (`getBookingByRef`). Tests whose assertions are expected to fail (`test.fail`) cancel in `test.afterEach`, so the cleanup still runs.
 
 ### Test data and expected texts
 
 - Inputs live in `src/data/test_data/*.json`, keyed by environment (`PROD`). Each spec reads the values it needs at the top with `readJsonValue` and passes them straight to page or API methods; request bodies are written inline from those values.
 - Expected texts (messages, dialog titles, statuses, patterns) live in `src/data/assertions.json` and are imported directly.
-- Events are **picked at runtime** (`findBookableEvent(minSeats)`) because ids differ per account and seats change.
+- Events are **picked at runtime** in each spec's `beforeEach`: `getEvents()`, assert 200, take the first event with at least `minAvailableSeats` free. Ids differ per account and seats change, so nothing is pinned.
 
 ### Waiting and timeouts
 
