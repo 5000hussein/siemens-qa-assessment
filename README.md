@@ -47,6 +47,18 @@ npm test                      # setup + UI + API: 25 tests, about 45 s
 
 The environment is public and shared, so every test cancels the bookings it creates, even when it fails.
 
+### Continuous integration (GitHub Actions)
+
+`.github/workflows/tests.yml` runs on every push, on every pull request, and from the **Run workflow** button in the Actions tab:
+
+1. **Static checks:** typecheck, lint, format check.
+2. **API tests**, after the static checks pass.
+3. **UI tests**, after the API job, even when the API tests fail. They don't run in parallel with the API job because both book the same event on the same account, and the seat-count checks would read each other's bookings.
+
+Each test job uploads its HTML report as an artifact (`api-report`, `ui-report`). In CI the browser is headless, a failed test is retried once, and a forgotten `test.only` fails the run.
+
+**One-time setup:** in the repository on GitHub, open **Settings → Secrets and variables → Actions** and add `EVENTHUB_USER_EMAIL` and `EVENTHUB_USER_PASSWORD`.
+
 ---
 
 ## 2. Story review
@@ -189,6 +201,7 @@ src/
   data/      environments.json · assertions.json (expected texts) · test_data/*.json
   utils/     jsonHelper.ts · timeouts.ts · format.ts
   tests/     setup/ (sign-in) · ui/<area>/ · api/<resource>/
+.github/     workflows/tests.yml: CI (section 1)
 .claude/     AI tooling: /automate command, agents, skills, domain knowledge, scripts (section 6.5)
 ```
 
@@ -363,14 +376,15 @@ Used only for checking (`npm run typecheck`). Playwright runs TypeScript directl
 
 #### Other files
 
-| File                | Purpose                                                                                                            |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `eslint.config.mjs` | TypeScript rules plus Playwright rules: no missing `await`, no `waitForTimeout`, no `test.only`, no `page.pause()` |
-| `.prettierrc.json`  | Formatting: single quotes, 140-character lines                                                                     |
-| `package.json`      | Scripts (section 1) and dev dependencies; Node 20+                                                                 |
-| `.env.example`      | Template for `.env`: only the two credentials                                                                      |
-| `.gitignore`        | Keeps secrets (`.env`, `.auth/`) and generated output out of git                                                   |
-| `.mcp.json`         | AI tooling only (section 6.5); the test suite doesn't use it                                                       |
+| File                          | Purpose                                                                                                            |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `eslint.config.mjs`           | TypeScript rules plus Playwright rules: no missing `await`, no `waitForTimeout`, no `test.only`, no `page.pause()` |
+| `.prettierrc.json`            | Formatting: single quotes, 140-character lines                                                                     |
+| `package.json`                | Scripts (section 1) and dev dependencies; Node 20+                                                                 |
+| `.env.example`                | Template for `.env`: only the two credentials                                                                      |
+| `.gitignore`                  | Keeps secrets (`.env`, `.auth/`) and generated output out of git                                                   |
+| `.mcp.json`                   | AI tooling only (section 6.5); the test suite doesn't use it                                                       |
+| `.github/workflows/tests.yml` | CI: static checks → API tests → UI tests, reports as artifacts (section 1)                                         |
 
 ### 6.5 AI tooling (`.claude/`)
 
